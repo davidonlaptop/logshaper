@@ -18,7 +18,7 @@ public class SLF4JSubscriber implements SlimEventsSubscriber
 
     public SLF4JSubscriber(Logger log)
     {
-        log = logger;
+        this.log = log;
     }
 
     @Override

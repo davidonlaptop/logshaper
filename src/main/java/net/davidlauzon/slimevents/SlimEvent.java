@@ -103,17 +103,9 @@ public class SlimEvent
     }
 
 
-    public SlimEvent broadcast( String broadCastLevel )
-    {
-        // TODO : FIXME recursive dependency
-
-        return this;
-    }
-
-    // FATAL > ERROR > WARN > INFO > DEBUG > TRACE
     public SlimEvent trace()
     {
-        if (!started)
+        if (state != SlimEventState.STARTED)
             start();
         registry.publishTrace(this);
 
@@ -122,7 +114,7 @@ public class SlimEvent
 
     public SlimEvent debug()
     {
-        if (!started)
+        if (state != SlimEventState.STARTED)
             start();
         registry.publishDebug(this);
 
@@ -131,7 +123,7 @@ public class SlimEvent
 
     public SlimEvent info()
     {
-        if (!started)
+        if (state != SlimEventState.STARTED)
             start();
         registry.publishInfo(this);
 
@@ -140,7 +132,7 @@ public class SlimEvent
 
     public SlimEvent warn()
     {
-        if (!started)
+        if (state != SlimEventState.STARTED)
             start();
         registry.publishWarn(this);
 
@@ -149,7 +141,7 @@ public class SlimEvent
 
     public SlimEvent error()
     {
-        if (!started)
+        if (state != SlimEventState.STARTED)
             start();
         registry.publishError(this);
 
@@ -182,21 +174,7 @@ public class SlimEvent
         eventEndedAtMS  = System.currentTimeMillis();
         state           = SlimEventState.ENDED;
 
-        return parent;
-    }
-
-
-    /**
-     * Same as stop() but also calls broadcast()
-     *
-     * @return SlimEvent the parent of this event
-     */
-    public SlimEvent stopAndBroadcast()
-    {
-        stop();
-        broadcast("broadCastLevel");
-
-        return parent;
+        return this;
     }
 
 
