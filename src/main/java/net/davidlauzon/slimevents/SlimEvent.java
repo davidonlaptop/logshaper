@@ -16,6 +16,7 @@ public class SlimEvent
     private SlimEvent parent;
 
     private String eventName;
+    private int depth;
     private long eventStartedAtMS;
     private long eventEndedAtMS;
     private SlimEventState state;
@@ -27,13 +28,15 @@ public class SlimEvent
     /**
      * Package-private constructor (reserved for internal use). See @EventsRegistry for how to initialize the root event
      *
-     * @param parent    The parent that triggered this new event
+     * @param parent    The parent that triggered this new event.
+     * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
      */
-    SlimEvent( EventsRegistry registry, String name, SlimEvent parent )
+    SlimEvent( EventsRegistry registry, String name, int depth, SlimEvent parent )
     {
         this.registry   = registry;
         this.eventName  = name;
+        this.depth      = depth;
         this.parent     = parent;
         this.counters   = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -49,9 +52,9 @@ public class SlimEvent
      * @param name The name of the event
      * @return the event newly created
      */
-    public SlimEvent startChildEvent( String name )
+    public SlimEvent createChild( String name )
     {
-        return new SlimEvent( registry, name, this );
+        return new SlimEvent( registry, name, depth + 1, this );
     }
 
 
@@ -174,7 +177,16 @@ public class SlimEvent
         eventEndedAtMS  = System.currentTimeMillis();
         state           = SlimEventState.ENDED;
 
+        // Accumulating this event's duration into the parent's scope
+        if (parent != null)
+            parent.count( getDurationCounterName(), durationInMS() );
+
         return this;
+    }
+
+    protected String getDurationCounterName()
+    {
+        return this.eventName.replace(' ', '.') + ".Duration";
     }
 
 
@@ -205,6 +217,10 @@ public class SlimEvent
             return 0;
     }
 
+    public SlimEvent parent() {
+        return parent;
+    }
+
     public String eventName()
     {
         return eventName;
@@ -213,5 +229,9 @@ public class SlimEvent
     public SlimEventState state()
     {
         return state;
+    }
+
+    public int depth() {
+        return depth;
     }
 }

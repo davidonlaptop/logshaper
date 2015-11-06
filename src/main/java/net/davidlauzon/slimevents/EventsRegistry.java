@@ -25,7 +25,7 @@ public class EventsRegistry
 
     public SlimEvent createRootEvent(String name)
     {
-        return new SlimEvent( this, name, null );
+        return new SlimEvent( this, name, 0, null );
     }
 
 
