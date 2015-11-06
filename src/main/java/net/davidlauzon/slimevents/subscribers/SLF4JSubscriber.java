@@ -4,10 +4,6 @@ import net.davidlauzon.slimevents.SlimEvent;
 import net.davidlauzon.slimevents.SlimEventsSubscriber;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by david on 15-11-05.
  */
@@ -28,21 +24,21 @@ public class SLF4JSubscriber extends AbstractSubscriber implements SlimEventsSub
 
     @Override
     public void onDebug(SlimEvent event) {
-        log.debug(formatEvent(event));
+        log.debug( formatEvent(event) );
     }
 
     @Override
     public void onInfo(SlimEvent event) {
-        log.info(formatEvent(event));
+        log.info( formatEvent(event) );
     }
 
     @Override
     public void onWarn(SlimEvent event) {
-        log.warn(formatEvent(event));
+        log.warn( formatEvent(event) );
     }
 
     @Override
     public void onError(SlimEvent event) {
-        log.error(formatEvent(event));
+        log.error( formatEvent(event) );
     }
 }

@@ -66,7 +66,7 @@ public class SlimEventTest
         SlimEvent event;
 
         event = slimevents.createRootEvent("TestEventAttribute")
-                .attribute("KEY1", "val1").attribute("KEY2", "val2")
+                .attr("KEY1", "val1").attr("KEY2", "val2")
                 .info();
         assertThat( subscriber.getLastMessage(), allOf(
                 containsString("KEY1=\"val1\""),
@@ -74,7 +74,7 @@ public class SlimEventTest
         ));
 
         event.stop()
-                .attribute("KEY3", "stopped")
+                .attr("KEY3", "stopped")
                 .info();
         assertThat( subscriber.getLastMessage(), allOf(
                 containsString("KEY1=\"val1\""),
@@ -91,21 +91,21 @@ public class SlimEventTest
         SlimEvent eventChild2Child2;
         SlimEvent eventChild2Child3;
 
-        eventParent = slimevents.createRootEvent("Request").attribute("ACTION", "Person.Update").info();
+        eventParent = slimevents.createRootEvent("Request").attr("ACTION", "Person.Update").info();
 
         eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).info();
         Thread.sleep(1);            // Expensive computation / external system
         eventChild1.stop().info();
 
         eventChild2       = eventParent.createChild("Resource processing").info();
-        eventChild2Child1 = eventChild2.createChild("SQL").attribute("QUERY","SELECT FROM ...").info();
+        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY","SELECT FROM ...").info();
         Thread.sleep(1);            // Expensive computation / external system
         eventChild2Child1.stop().info();
         eventChild2Child2 = eventChild2.createChild("BIRT").info();
         Thread.sleep(1);            // Expensive computation / external system
         eventChild2Child2.stop().info();
         eventChild2.stop().info();
-        eventChild2Child3 = eventChild2.createChild("SQL").attribute("QUERY", "UPDATE ...").info();
+        eventChild2Child3 = eventChild2.createChild("SQL").attr("QUERY", "UPDATE ...").info();
         Thread.sleep(1);            // Expensive computation / external system
         eventChild2Child3.stop().info();
 

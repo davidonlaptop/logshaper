@@ -1,7 +1,7 @@
 package net.davidlauzon.slimevents;
 
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -21,8 +21,7 @@ public class SlimEvent
     private long eventEndedAtMS;
     private SlimEventState state;
 
-    private Map<String,Long> counters;
-    private Map<String,String> attributes;
+    private Map<String,Attribute> attributes;
 
 
     /**
@@ -38,8 +37,7 @@ public class SlimEvent
         this.eventName  = name;
         this.depth      = depth;
         this.parent     = parent;
-        this.counters   = new HashMap<>();
-        this.attributes = new HashMap<>();
+        this.attributes = new LinkedHashMap<>();
 
         eventStartedAtMS = System.currentTimeMillis();
         state            = SlimEventState.NEW;
@@ -71,17 +69,17 @@ public class SlimEvent
      * @param value         The value to add to the counter.
      * @return SlimEvent    The current counter.
      */
-    public SlimEvent count( String name, long value )
+    public SlimEvent count(String name, long value)
     {
-        Long previousValue = counters.get(name);
-        if (previousValue != null)
-            counters.put(name, value + previousValue);
+        CounterAttribute attr = ((CounterAttribute) attributes.get(name));
+        if (attr == null)
+            attributes.put( name, new CounterAttribute(value) );
         else
-            counters.put(name, value);
+            attr.increment(value);
 
         // propagate the counter to the parents recursively
         if (parent != null)
-            parent.count( name, value );
+            parent.count(name, value);
 
         return this;
     }
@@ -98,9 +96,9 @@ public class SlimEvent
      * @param value         The attribute value
      * @return SlimEvent    this event
      */
-    public SlimEvent attribute( String name, String value )
+    public SlimEvent attr( String name, String value )
     {
-        attributes.put(name, value);
+        this.attributes.put( name, new TextAttribute(value) );
 
         return this;
     }
@@ -179,7 +177,7 @@ public class SlimEvent
 
         // Accumulating this event's duration into the parent's scope
         if (parent != null)
-            parent.count( getDurationCounterName(), durationInMS() );
+            parent.count(getDurationCounterName(), durationInMS());
 
         return this;
     }
@@ -193,17 +191,9 @@ public class SlimEvent
     /**
      * Getter of attributes
      */
-    public Map<String,String> attributes()
+    public Map<String,Attribute> attributes()
     {
         return attributes;
-    }
-
-    /**
-     * Getter of counters
-     */
-    public Map<String,Long> counters()
-    {
-        return counters;
     }
 
     /**
@@ -233,5 +223,81 @@ public class SlimEvent
 
     public int depth() {
         return depth;
+    }
+
+
+    static public abstract class Attribute
+    {
+        protected Type type;
+
+        public Type type() {
+            return type;
+        }
+
+        public enum Type
+        {
+            Text,
+            Counter,
+            DurationCounter
+        }
+
+        public abstract String stringValue();
+    }
+
+    static public class TextAttribute extends Attribute
+    {
+        protected String value;
+
+        public TextAttribute( String value )
+        {
+            this.value = value;
+            this.type  = Type.Text;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public String stringValue() {
+            return String.valueOf( value );
+        }
+    }
+
+    static public class CounterAttribute extends Attribute
+    {
+        protected long value;
+
+        public CounterAttribute( long value )
+        {
+            this.value = value;
+            this.type  = Type.Counter;
+        }
+
+        public void increment(long increment) {
+            this.value += increment;
+        }
+
+        public long value() {
+            return value;
+        }
+
+        @Override
+        public String stringValue() {
+            return String.valueOf( value );
+        }
+    }
+
+    static public class DurationAttribute extends CounterAttribute
+    {
+        public DurationAttribute( long value )
+        {
+            super( value );
+            this.type  = Type.DurationCounter;
+        }
+
+        public float seconds() {
+            return value / 1000f;
+        }
     }
 }

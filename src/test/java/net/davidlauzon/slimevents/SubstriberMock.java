@@ -13,19 +13,19 @@ public class SubstriberMock extends AbstractSubscriber implements SlimEventsSubs
     @Override
     public void onTrace(SlimEvent event)
     {
-        publish( "TRACE " + formatEvent(event) );
+        publish("TRACE " + formatEvent(event));
     }
 
     @Override
     public void onDebug(SlimEvent event)
     {
-        publish( "DEBUG " + formatEvent(event) );
+        publish("DEBUG " + formatEvent(event));
     }
 
     @Override
     public void onInfo(SlimEvent event)
     {
-        publish( "INFO " + formatEvent(event) );
+        publish("INFO " + formatEvent(event));
     }
 
     @Override

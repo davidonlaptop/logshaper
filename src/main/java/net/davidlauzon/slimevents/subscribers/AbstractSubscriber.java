@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
-
 /**
  * Created by david on 15-11-06.
  */
@@ -20,39 +18,53 @@ public class AbstractSubscriber
 
 
     protected String formatEvent(SlimEvent event) {
-        Map<String, String> attributesMap = event.attributes();
-        Map<String, Long> countersMap = event.counters();
-        ;
+        Map<String, SlimEvent.Attribute> attributesMap;
+        List<String> attributesList;
 
-        List<String> attributesList = new ArrayList<>(attributesMap.size());
-        List<String> countersList = new ArrayList<>(countersMap.size());
+        attributesMap  = event.attributes();
+        attributesList = new ArrayList<>(attributesMap.size());
 
-        for (Map.Entry<String, String> entry : attributesMap.entrySet()) {
-            attributesList.add(entry.getKey() + "=\"" + entry.getValue() + '"');
-        }
+        SlimEvent.Attribute attribute;
+        String attributeName;
 
-        for (Map.Entry<String, Long> entry : countersMap.entrySet()) {
-            countersList.add(entry.getKey() + "=" + entry.getValue());
+        for ( Map.Entry<String,SlimEvent.Attribute> entry : attributesMap.entrySet() )
+        {
+            attributeName = entry.getKey();
+            attribute     = entry.getValue();
+
+            switch (attribute.type())
+            {
+                case Text:
+                    attributesList.add( entry.getKey() + "=\"" + attribute.stringValue() + '"' );
+                    break;
+
+                case Counter:
+                    attributesList.add( entry.getKey() + "=" + attribute.stringValue() );
+                    break;
+
+                default:
+                    throw new RuntimeException("Unsupported attribute type: '" + attribute.type() + "'");
+            }
         }
 
         switch (event.state()) {
             case STARTED:
-                return String.format("%s%s started. %s  %s  Provenance=\"%s\"",
+                attributesList.add( "Provenance=\"" + getEventProvenance(event) + '"' );
+                return String.format("%s%s started. %s",
                         getDepthPrefix(event),
                         event.eventName(),
-                        attributesList,
-                        countersList,
-                        getEventProvenance(event)
+                        attributesList
                 );
+
             case ENDED:
-                return String.format("%s%s ended in %.3fs. %s %s  Provenance=\"%s\"",
+                attributesList.add( "Provenance=\"" + getEventProvenance(event) + '"' );
+                return String.format("%s%s ended in %.3fs. %s",
                         getDepthPrefix(event),
                         event.eventName(),
                         event.durationInMS() / 1000f,
-                        attributesList,
-                        countersList,
-                        getEventProvenance(event)
+                        attributesList
                 );
+
             default:
                 // State NEW
                 return null;

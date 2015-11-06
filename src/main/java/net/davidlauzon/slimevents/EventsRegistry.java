@@ -1,5 +1,6 @@
 package net.davidlauzon.slimevents;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,28 +44,28 @@ public class EventsRegistry
     void publishDebug( SlimEvent event )
     {
         for (SlimEventsSubscriber subscriber : subscribers) {
-            subscriber.onDebug( event );
+            subscriber.onDebug(event);
         }
     }
 
     void publishInfo( SlimEvent event )
     {
         for (SlimEventsSubscriber subscriber : subscribers) {
-            subscriber.onInfo( event );
+            subscriber.onInfo(event);
         }
     }
 
     void publishWarn( SlimEvent event )
     {
         for (SlimEventsSubscriber subscriber : subscribers) {
-            subscriber.onWarn( event );
+            subscriber.onWarn(event);
         }
     }
 
     void publishError( SlimEvent event )
     {
         for (SlimEventsSubscriber subscriber : subscribers) {
-            subscriber.onError( event );
+            subscriber.onError(event);
         }
     }
 }
