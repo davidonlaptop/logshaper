@@ -105,7 +105,7 @@ public class SlimEvent
 
     public SlimEvent trace()
     {
-        if (state != SlimEventState.STARTED)
+        if (state == SlimEventState.NEW)
             start();
         registry.publishTrace(this);
 
@@ -114,7 +114,7 @@ public class SlimEvent
 
     public SlimEvent debug()
     {
-        if (state != SlimEventState.STARTED)
+        if (state == SlimEventState.NEW)
             start();
         registry.publishDebug(this);
 
@@ -123,7 +123,7 @@ public class SlimEvent
 
     public SlimEvent info()
     {
-        if (state != SlimEventState.STARTED)
+        if (state == SlimEventState.NEW)
             start();
         registry.publishInfo(this);
 
@@ -132,7 +132,7 @@ public class SlimEvent
 
     public SlimEvent warn()
     {
-        if (state != SlimEventState.STARTED)
+        if (state == SlimEventState.NEW)
             start();
         registry.publishWarn(this);
 
@@ -141,7 +141,7 @@ public class SlimEvent
 
     public SlimEvent error()
     {
-        if (state != SlimEventState.STARTED)
+        if (state == SlimEventState.NEW)
             start();
         registry.publishError(this);
 
