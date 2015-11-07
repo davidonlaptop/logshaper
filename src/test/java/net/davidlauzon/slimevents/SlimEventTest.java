@@ -1,5 +1,6 @@
 package net.davidlauzon.slimevents;
 
+import net.davidlauzon.slimevents.event.Event;
 import org.junit.*;
 
 import static com.jcabi.matchers.RegexMatchers.*;

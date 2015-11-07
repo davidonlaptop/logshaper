@@ -1,7 +1,8 @@
-package net.davidlauzon.slimevents.subscribers;
+package net.davidlauzon.slimevents.subscriber;
 
 import com.google.common.io.BaseEncoding;
-import net.davidlauzon.slimevents.Event;
+import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.slimevents.event.attribute.Attribute;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -18,16 +19,16 @@ public class AbstractSubscriber
 
 
     protected String formatEvent(Event event) {
-        Map<String, Event.Attribute> attributesMap;
+        Map<String, Attribute> attributesMap;
         List<String> attributesList;
 
         attributesMap  = event.attributes();
         attributesList = new ArrayList<>(attributesMap.size());
 
-        Event.Attribute attribute;
+        Attribute attribute;
         String attributeName;
 
-        for ( Map.Entry<String,Event.Attribute> entry : attributesMap.entrySet() )
+        for ( Map.Entry<String,Attribute> entry : attributesMap.entrySet() )
         {
             attributeName = entry.getKey();
             attribute     = entry.getValue();

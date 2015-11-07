@@ -1,6 +1,10 @@
 package net.davidlauzon.slimevents;
 
 
+import net.davidlauzon.slimevents.event.DefaultEvent;
+import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.slimevents.subscriber.Subscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class EventRegistry
 
     public Event createRootEvent(String name)
     {
-        return new Event( this, name, 0, null );
+        return new DefaultEvent( this, name, 0, null );
     }
 
 
@@ -34,35 +38,35 @@ public class EventRegistry
      * package-private (reserved for internal use)
       * @param event
      */
-    void publishTrace( Event event )
+    public void publishTrace( Event event )
     {
         for (Subscriber subscriber : subscribers) {
             subscriber.onTrace( event );
         }
     }
 
-    void publishDebug( Event event )
+    public void publishDebug( Event event )
     {
         for (Subscriber subscriber : subscribers) {
             subscriber.onDebug(event);
         }
     }
 
-    void publishInfo( Event event )
+    public void publishInfo( Event event )
     {
         for (Subscriber subscriber : subscribers) {
             subscriber.onInfo(event);
         }
     }
 
-    void publishWarn( Event event )
+    public void publishWarn( Event event )
     {
         for (Subscriber subscriber : subscribers) {
             subscriber.onWarn(event);
         }
     }
 
-    void publishError( Event event )
+    public void publishError( Event event )
     {
         for (Subscriber subscriber : subscribers) {
             subscriber.onError(event);

@@ -1,5 +1,7 @@
 package net.davidlauzon.slimevents;
 
+import net.davidlauzon.slimevents.event.Event;
+
 /**
  * Created by david on 15-11-06.
  */

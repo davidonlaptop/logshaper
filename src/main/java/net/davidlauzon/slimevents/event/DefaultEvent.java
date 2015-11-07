@@ -1,5 +1,10 @@
-package net.davidlauzon.slimevents;
+package net.davidlauzon.slimevents.event;
 
+
+import net.davidlauzon.slimevents.EventRegistry;
+import net.davidlauzon.slimevents.event.attribute.Attribute;
+import net.davidlauzon.slimevents.event.attribute.CounterAttribute;
+import net.davidlauzon.slimevents.event.attribute.TextAttribute;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,8 +15,7 @@ import java.util.Map;
  *
  * Log levels hierarchy: FATAL, ERROR, WARN, INFO, DEBUG, TRACE
  */
-public class Event
-{
+public class DefaultEvent implements Event {
     private EventRegistry registry;
     private Event parent;
 
@@ -19,19 +23,19 @@ public class Event
     private int depth;
     private long eventStartedAtMS;
     private long eventEndedAtMS;
-    private State state;
+    private EventState state;
 
     private Map<String,Attribute> attributes;
 
 
     /**
-     * Package-private constructor (reserved for internal use). See @EventRegistry for how to initialize the root event
+     * (Constructor reserved for internal use). See @EventRegistry for how to initialize the root event
      *
      * @param parent    The parent that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
      */
-    Event(EventRegistry registry, String name, int depth, Event parent)
+    public DefaultEvent(EventRegistry registry, String name, int depth, Event parent)
     {
         this.registry   = registry;
         this.eventName  = name;
@@ -40,7 +44,7 @@ public class Event
         this.attributes = new LinkedHashMap<>();
 
         eventStartedAtMS = System.currentTimeMillis();
-        state            = State.NEW;
+        state            = EventState.NEW;
     }
 
 
@@ -50,9 +54,10 @@ public class Event
      * @param name The name of the event
      * @return the event newly created
      */
-    public Event createChild( String name )
+    @Override
+    public Event createChild(String name)
     {
-        return new Event( registry, name, depth + 1, this );
+        return new DefaultEvent( registry, name, depth + 1, this );
     }
 
 
@@ -69,6 +74,7 @@ public class Event
      * @param value         The value to add to the counter.
      * @return Event    The current counter.
      */
+    @Override
     public Event count(String name, long value)
     {
         CounterAttribute attr = ((CounterAttribute) attributes.get(name));
@@ -96,7 +102,8 @@ public class Event
      * @param value         The attribute value
      * @return Event    this event
      */
-    public Event attr( String name, String value )
+    @Override
+    public Event attr(String name, String value)
     {
         this.attributes.put( name, new TextAttribute(value) );
 
@@ -104,45 +111,50 @@ public class Event
     }
 
 
+    @Override
     public Event trace()
     {
-        if (state == State.NEW)
+        if (state == EventState.NEW)
             start();
         registry.publishTrace(this);
 
         return this;
     }
 
+    @Override
     public Event debug()
     {
-        if (state == State.NEW)
+        if (state == EventState.NEW)
             start();
         registry.publishDebug(this);
 
         return this;
     }
 
+    @Override
     public Event info()
     {
-        if (state == State.NEW)
+        if (state == EventState.NEW)
             start();
         registry.publishInfo(this);
 
         return this;
     }
 
+    @Override
     public Event warn()
     {
-        if (state == State.NEW)
+        if (state == EventState.NEW)
             start();
         registry.publishWarn(this);
 
         return this;
     }
 
+    @Override
     public Event error()
     {
-        if (state == State.NEW)
+        if (state == EventState.NEW)
             start();
         registry.publishError(this);
 
@@ -157,9 +169,10 @@ public class Event
      *
      * @return Event    this event
      */
+    @Override
     public Event start()
     {
-        state               = State.STARTED;
+        state               = EventState.STARTED;
         eventStartedAtMS    = System.currentTimeMillis();
 
         return this;
@@ -170,10 +183,11 @@ public class Event
      *
      * @return Event the parent of this event
      */
+    @Override
     public Event stop()
     {
         eventEndedAtMS  = System.currentTimeMillis();
-        state           = State.ENDED;
+        state           = EventState.ENDED;
 
         // Accumulating this event's duration into the parent's scope
         if (parent != null)
@@ -193,6 +207,7 @@ public class Event
      *
      * @return the list of attributes
      */
+    @Override
     public Map<String,Attribute> attributes()
     {
         return attributes;
@@ -201,6 +216,7 @@ public class Event
     /**
      * @return duration of the event in milliseconds, or 0 if non-started/non-stopped.
      */
+    @Override
     public long durationInMS()
     {
         if (eventStartedAtMS > 0 && eventEndedAtMS > 0)
@@ -209,105 +225,27 @@ public class Event
             return 0;
     }
 
+    @Override
     public Event parent() {
         return parent;
     }
 
+    @Override
     public String eventName()
     {
         return eventName;
     }
 
-    public State state()
+    @Override
+    public EventState state()
     {
         return state;
     }
 
+    @Override
     public int depth() {
         return depth;
     }
 
 
-    static public abstract class Attribute
-    {
-        protected Type type;
-
-        public Type type() {
-            return type;
-        }
-
-        public enum Type
-        {
-            Text,
-            Counter,
-            DurationCounter
-        }
-
-        public abstract String stringValue();
-    }
-
-    static public class TextAttribute extends Attribute
-    {
-        protected String value;
-
-        public TextAttribute( String value )
-        {
-            this.value = value;
-            this.type  = Type.Text;
-        }
-
-        public String value() {
-            return value;
-        }
-
-        @Override
-        public String stringValue() {
-            return String.valueOf( value );
-        }
-    }
-
-    static public class CounterAttribute extends Attribute
-    {
-        protected long value;
-
-        public CounterAttribute( long value )
-        {
-            this.value = value;
-            this.type  = Type.Counter;
-        }
-
-        public void increment(long increment) {
-            this.value += increment;
-        }
-
-        public long value() {
-            return value;
-        }
-
-        @Override
-        public String stringValue() {
-            return String.valueOf( value );
-        }
-    }
-
-    static public class DurationAttribute extends CounterAttribute
-    {
-        public DurationAttribute( long value )
-        {
-            super( value );
-            this.type  = Type.DurationCounter;
-        }
-
-        public float seconds() {
-            return value / 1000f;
-        }
-    }
-
-
-    public static enum State
-    {
-        NEW,
-        STARTED,
-        ENDED
-    }
 }

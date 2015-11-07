@@ -1,6 +1,8 @@
 package net.davidlauzon.slimevents;
 
-import net.davidlauzon.slimevents.subscribers.AbstractSubscriber;
+import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.slimevents.subscriber.AbstractSubscriber;
+import net.davidlauzon.slimevents.subscriber.Subscriber;
 
 /**
  * Created by david on 15-11-06.
