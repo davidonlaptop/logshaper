@@ -15,7 +15,7 @@ public class SlimEvent
 
     /**
      * Create a new root event in the default registry
-     * @param name
+     * @param name The name of the event
      * @return the event
      */
     static public Event createRootEvent( String name )

@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by david on 15-11-04.
  *
- * Log levels hierarchy: FATAL > ERROR > WARN > INFO > DEBUG > TRACE
+ * Log levels hierarchy: FATAL, ERROR, WARN, INFO, DEBUG, TRACE
  */
 public class Event
 {
@@ -190,6 +190,8 @@ public class Event
 
     /**
      * Getter of attributes
+     *
+     * @return the list of attributes
      */
     public Map<String,Attribute> attributes()
     {
