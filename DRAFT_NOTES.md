@@ -77,3 +77,4 @@ TODO: use a better unique id for root event (e.g. 128-bit or 256-bit id)
 TODO: rename method with publish()
 
 TODO: name: MetricsMachine ?
+TODO: name: event driven logging

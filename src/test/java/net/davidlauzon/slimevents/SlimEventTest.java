@@ -1,8 +1,6 @@
 package net.davidlauzon.slimevents;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import static com.jcabi.matchers.RegexMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -13,40 +11,37 @@ import static org.junit.Assert.*;
  */
 public class SlimEventTest
 {
-    private EventRegistry slimevents;
-    private SubstriberMock subscriber;
+    static private SubstriberMock subscriber;
 
 
-    @Before public void setUp() throws Exception
+    @BeforeClass static public void setUp() throws Exception
     {
         subscriber  = new SubstriberMock();
-        slimevents  = new EventRegistry();
-        slimevents.subscribe( subscriber );
+        SlimEvent.getDefaultRegistry().subscribe( subscriber  );
     }
 
-    @After public void tearDown() throws Exception
+    @AfterClass static public void tearDown() throws Exception
     {
         subscriber  = null;
-        slimevents  = null;
     }
 
 
     @Test public void testBroadcastLevel()
     {
         // ERROR > WARN > INFO > DEBUG > TRACE
-        slimevents.createRootEvent("Test Broadcast").error();
+        SlimEvent.createRootEvent("TestBroadcast").error();
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
-        slimevents.createRootEvent("Test Broadcast").warn();
+        SlimEvent.createRootEvent("TestBroadcast").warn();
         assertThat( subscriber.getLastMessage(), startsWith("WARN") );
 
-        slimevents.createRootEvent("Test Broadcast").info();
+        SlimEvent.createRootEvent("TestBroadcast").info();
         assertThat( subscriber.getLastMessage(), startsWith("INFO") );
 
-        slimevents.createRootEvent("Test Broadcast").debug();
+        SlimEvent.createRootEvent("TestBroadcast").debug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
 
-        slimevents.createRootEvent("Test Broadcast").trace();
+        SlimEvent.createRootEvent("TestBroadcast").trace();
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
@@ -54,7 +49,7 @@ public class SlimEventTest
     {
         Event event;
 
-        event = slimevents.createRootEvent("TestStopDuration").info();
+        event = SlimEvent.createRootEvent("TestStopDuration").info();
         assertThat( subscriber.getLastMessage(), containsString("started") );
 
         event.stop().info();
@@ -65,7 +60,7 @@ public class SlimEventTest
     {
         Event event;
 
-        event = slimevents.createRootEvent("TestEventAttribute")
+        event = SlimEvent.createRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
                 .info();
         assertThat( subscriber.getLastMessage(), allOf(
@@ -91,7 +86,7 @@ public class SlimEventTest
         Event eventChild2Child2;
         Event eventChild2Child3;
 
-        eventParent = slimevents.createRootEvent("Request").attr("ACTION", "Person.Update").info();
+        eventParent = SlimEvent.createRootEvent("Request").attr("ACTION", "Person.Update").info();
 
         eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).info();
         Thread.sleep(1);            // Expensive computation / external system
