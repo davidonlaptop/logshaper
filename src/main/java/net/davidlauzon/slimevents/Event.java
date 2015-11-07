@@ -10,28 +10,28 @@ import java.util.Map;
  *
  * Log levels hierarchy: FATAL > ERROR > WARN > INFO > DEBUG > TRACE
  */
-public class SlimEvent
+public class Event
 {
-    private EventsRegistry registry;
-    private SlimEvent parent;
+    private EventRegistry registry;
+    private Event parent;
 
     private String eventName;
     private int depth;
     private long eventStartedAtMS;
     private long eventEndedAtMS;
-    private SlimEventState state;
+    private State state;
 
     private Map<String,Attribute> attributes;
 
 
     /**
-     * Package-private constructor (reserved for internal use). See @EventsRegistry for how to initialize the root event
+     * Package-private constructor (reserved for internal use). See @EventRegistry for how to initialize the root event
      *
      * @param parent    The parent that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
      */
-    SlimEvent( EventsRegistry registry, String name, int depth, SlimEvent parent )
+    Event(EventRegistry registry, String name, int depth, Event parent)
     {
         this.registry   = registry;
         this.eventName  = name;
@@ -40,7 +40,7 @@ public class SlimEvent
         this.attributes = new LinkedHashMap<>();
 
         eventStartedAtMS = System.currentTimeMillis();
-        state            = SlimEventState.NEW;
+        state            = State.NEW;
     }
 
 
@@ -50,9 +50,9 @@ public class SlimEvent
      * @param name The name of the event
      * @return the event newly created
      */
-    public SlimEvent createChild( String name )
+    public Event createChild( String name )
     {
-        return new SlimEvent( registry, name, depth + 1, this );
+        return new Event( registry, name, depth + 1, this );
     }
 
 
@@ -67,9 +67,9 @@ public class SlimEvent
      *
      * @param name          The name of the counter.
      * @param value         The value to add to the counter.
-     * @return SlimEvent    The current counter.
+     * @return Event    The current counter.
      */
-    public SlimEvent count(String name, long value)
+    public Event count(String name, long value)
     {
         CounterAttribute attr = ((CounterAttribute) attributes.get(name));
         if (attr == null)
@@ -94,9 +94,9 @@ public class SlimEvent
      *
      * @param name          The attribute name
      * @param value         The attribute value
-     * @return SlimEvent    this event
+     * @return Event    this event
      */
-    public SlimEvent attr( String name, String value )
+    public Event attr( String name, String value )
     {
         this.attributes.put( name, new TextAttribute(value) );
 
@@ -104,45 +104,45 @@ public class SlimEvent
     }
 
 
-    public SlimEvent trace()
+    public Event trace()
     {
-        if (state == SlimEventState.NEW)
+        if (state == State.NEW)
             start();
         registry.publishTrace(this);
 
         return this;
     }
 
-    public SlimEvent debug()
+    public Event debug()
     {
-        if (state == SlimEventState.NEW)
+        if (state == State.NEW)
             start();
         registry.publishDebug(this);
 
         return this;
     }
 
-    public SlimEvent info()
+    public Event info()
     {
-        if (state == SlimEventState.NEW)
+        if (state == State.NEW)
             start();
         registry.publishInfo(this);
 
         return this;
     }
 
-    public SlimEvent warn()
+    public Event warn()
     {
-        if (state == SlimEventState.NEW)
+        if (state == State.NEW)
             start();
         registry.publishWarn(this);
 
         return this;
     }
 
-    public SlimEvent error()
+    public Event error()
     {
-        if (state == SlimEventState.NEW)
+        if (state == State.NEW)
             start();
         registry.publishError(this);
 
@@ -155,11 +155,11 @@ public class SlimEvent
      *
      * No need to handle this manually, unless you don't want to broadcast the start event.
      *
-     * @return SlimEvent    this event
+     * @return Event    this event
      */
-    public SlimEvent start()
+    public Event start()
     {
-        state               = SlimEventState.STARTED;
+        state               = State.STARTED;
         eventStartedAtMS    = System.currentTimeMillis();
 
         return this;
@@ -168,12 +168,12 @@ public class SlimEvent
     /**
      * Records the timestamp where this event occurred AND returns the parent of this event.
      *
-     * @return SlimEvent the parent of this event
+     * @return Event the parent of this event
      */
-    public SlimEvent stop()
+    public Event stop()
     {
         eventEndedAtMS  = System.currentTimeMillis();
-        state           = SlimEventState.ENDED;
+        state           = State.ENDED;
 
         // Accumulating this event's duration into the parent's scope
         if (parent != null)
@@ -207,7 +207,7 @@ public class SlimEvent
             return 0;
     }
 
-    public SlimEvent parent() {
+    public Event parent() {
         return parent;
     }
 
@@ -216,7 +216,7 @@ public class SlimEvent
         return eventName;
     }
 
-    public SlimEventState state()
+    public State state()
     {
         return state;
     }
@@ -299,5 +299,13 @@ public class SlimEvent
         public float seconds() {
             return value / 1000f;
         }
+    }
+
+
+    public static enum State
+    {
+        NEW,
+        STARTED,
+        ENDED
     }
 }

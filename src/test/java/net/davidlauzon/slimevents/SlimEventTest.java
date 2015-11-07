@@ -13,14 +13,14 @@ import static org.junit.Assert.*;
  */
 public class SlimEventTest
 {
-    private EventsRegistry slimevents;
+    private EventRegistry slimevents;
     private SubstriberMock subscriber;
 
 
     @Before public void setUp() throws Exception
     {
         subscriber  = new SubstriberMock();
-        slimevents  = new EventsRegistry();
+        slimevents  = new EventRegistry();
         slimevents.subscribe( subscriber );
     }
 
@@ -52,7 +52,7 @@ public class SlimEventTest
 
     @Test public void testStopDuration()
     {
-        SlimEvent event;
+        Event event;
 
         event = slimevents.createRootEvent("TestStopDuration").info();
         assertThat( subscriber.getLastMessage(), containsString("started") );
@@ -63,7 +63,7 @@ public class SlimEventTest
 
     @Test public void testEventAttributes()
     {
-        SlimEvent event;
+        Event event;
 
         event = slimevents.createRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
@@ -84,12 +84,12 @@ public class SlimEventTest
     }
 
     @Test public void testEventHierarchy() throws InterruptedException {
-        SlimEvent eventParent;
-        SlimEvent eventChild1;
-        SlimEvent eventChild2;
-        SlimEvent eventChild2Child1;
-        SlimEvent eventChild2Child2;
-        SlimEvent eventChild2Child3;
+        Event eventParent;
+        Event eventChild1;
+        Event eventChild2;
+        Event eventChild2Child1;
+        Event eventChild2Child2;
+        Event eventChild2Child3;
 
         eventParent = slimevents.createRootEvent("Request").attr("ACTION", "Person.Update").info();
 
@@ -98,7 +98,7 @@ public class SlimEventTest
         eventChild1.stop().info();
 
         eventChild2       = eventParent.createChild("Resource processing").info();
-        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY","SELECT FROM ...").info();
+        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY", "SELECT FROM ...").info();
         Thread.sleep(1);            // Expensive computation / external system
         eventChild2Child1.stop().info();
         eventChild2Child2 = eventChild2.createChild("BIRT").info();

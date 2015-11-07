@@ -1,7 +1,7 @@
 package net.davidlauzon.slimevents.subscribers;
 
 import com.google.common.io.BaseEncoding;
-import net.davidlauzon.slimevents.SlimEvent;
+import net.davidlauzon.slimevents.Event;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -17,17 +17,17 @@ public class AbstractSubscriber
     static public final String PROVENANCE_SEP = ".";
 
 
-    protected String formatEvent(SlimEvent event) {
-        Map<String, SlimEvent.Attribute> attributesMap;
+    protected String formatEvent(Event event) {
+        Map<String, Event.Attribute> attributesMap;
         List<String> attributesList;
 
         attributesMap  = event.attributes();
         attributesList = new ArrayList<>(attributesMap.size());
 
-        SlimEvent.Attribute attribute;
+        Event.Attribute attribute;
         String attributeName;
 
-        for ( Map.Entry<String,SlimEvent.Attribute> entry : attributesMap.entrySet() )
+        for ( Map.Entry<String,Event.Attribute> entry : attributesMap.entrySet() )
         {
             attributeName = entry.getKey();
             attribute     = entry.getValue();
@@ -72,16 +72,16 @@ public class AbstractSubscriber
     }
 
 
-    protected String getDepthPrefix( SlimEvent event )
+    protected String getDepthPrefix( Event event )
     {
         // Returns a string of N spaces length, where N is the depth level of the event to the root event
         return CharBuffer.allocate( event.depth() ).toString().replace( '\0', ' ' );
     }
 
-    protected String getEventProvenance( SlimEvent event )
+    protected String getEventProvenance( Event event )
     {
         StringBuilder provenance = new StringBuilder().append( getObjectHexIdentity(event) );
-        SlimEvent parent = event.parent();
+        Event parent = event.parent();
 
         while (parent != null)
         {

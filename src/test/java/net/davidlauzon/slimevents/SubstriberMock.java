@@ -5,37 +5,37 @@ import net.davidlauzon.slimevents.subscribers.AbstractSubscriber;
 /**
  * Created by david on 15-11-06.
  */
-public class SubstriberMock extends AbstractSubscriber implements SlimEventsSubscriber
+public class SubstriberMock extends AbstractSubscriber implements Subscriber
 {
     private String lastMessage;
 
 
     @Override
-    public void onTrace(SlimEvent event)
+    public void onTrace(Event event)
     {
         publish("TRACE " + formatEvent(event));
     }
 
     @Override
-    public void onDebug(SlimEvent event)
+    public void onDebug(Event event)
     {
         publish("DEBUG " + formatEvent(event));
     }
 
     @Override
-    public void onInfo(SlimEvent event)
+    public void onInfo(Event event)
     {
-        publish("INFO " + formatEvent(event));
+        publish( "INFO " + formatEvent(event));
     }
 
     @Override
-    public void onWarn(SlimEvent event)
+    public void onWarn(Event event)
     {
         publish( "WARN " + formatEvent(event));
     }
 
     @Override
-    public void onError(SlimEvent event)
+    public void onError(Event event)
     {
         publish( "ERROR " + formatEvent(event));
     }
