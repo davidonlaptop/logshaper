@@ -1,11 +1,11 @@
-package net.davidlauzon.slimevents;
+package net.davidlauzon.logshaper;
 
-import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.logshaper.event.Event;
 
 /**
  * Created by david on 15-11-06.
  */
-public class SlimEvent
+public class LogShaper
 {
     static private final EventRegistry defaultRegistry = new EventRegistry();
 

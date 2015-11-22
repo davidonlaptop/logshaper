@@ -1,4 +1,4 @@
-package net.davidlauzon.slimevents.event;
+package net.davidlauzon.logshaper.event;
 
 /**
  * Created by david on 15-11-07.

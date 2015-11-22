@@ -1,6 +1,6 @@
-package net.davidlauzon.slimevents;
+package net.davidlauzon.logshaper;
 
-import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.logshaper.event.Event;
 import org.junit.*;
 
 import static com.jcabi.matchers.RegexMatchers.*;
@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 /**
  * Created by david on 15-11-06.
  */
-public class SlimEventTest
+public class LogShaperTest
 {
     static private SubstriberMock subscriber;
 
@@ -18,7 +18,7 @@ public class SlimEventTest
     @BeforeClass static public void setUp() throws Exception
     {
         subscriber  = new SubstriberMock();
-        SlimEvent.getDefaultRegistry().subscribe( subscriber  );
+        LogShaper.getDefaultRegistry().subscribe( subscriber  );
     }
 
     @AfterClass static public void tearDown() throws Exception
@@ -30,19 +30,19 @@ public class SlimEventTest
     @Test public void testBroadcastLevel()
     {
         // ERROR > WARN > INFO > DEBUG > TRACE
-        SlimEvent.createRootEvent("TestBroadcast").error();
+        LogShaper.createRootEvent("TestBroadcast").error();
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
-        SlimEvent.createRootEvent("TestBroadcast").warn();
+        LogShaper.createRootEvent("TestBroadcast").warn();
         assertThat( subscriber.getLastMessage(), startsWith("WARN") );
 
-        SlimEvent.createRootEvent("TestBroadcast").info();
+        LogShaper.createRootEvent("TestBroadcast").info();
         assertThat( subscriber.getLastMessage(), startsWith("INFO") );
 
-        SlimEvent.createRootEvent("TestBroadcast").debug();
+        LogShaper.createRootEvent("TestBroadcast").debug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
 
-        SlimEvent.createRootEvent("TestBroadcast").trace();
+        LogShaper.createRootEvent("TestBroadcast").trace();
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
@@ -50,7 +50,7 @@ public class SlimEventTest
     {
         Event event;
 
-        event = SlimEvent.createRootEvent("TestStopDuration").info();
+        event = LogShaper.createRootEvent("TestStopDuration").info();
         assertThat( subscriber.getLastMessage(), containsString("started") );
 
         event.stop().info();
@@ -61,7 +61,7 @@ public class SlimEventTest
     {
         Event event;
 
-        event = SlimEvent.createRootEvent("TestEventAttribute")
+        event = LogShaper.createRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
                 .info();
         assertThat( subscriber.getLastMessage(), allOf(
@@ -87,7 +87,7 @@ public class SlimEventTest
         Event eventChild2Child2;
         Event eventChild2Child3;
 
-        eventParent = SlimEvent.createRootEvent("Request").attr("ACTION", "Person.Update").info();
+        eventParent = LogShaper.createRootEvent("Request").attr("ACTION", "Person.Update").info();
 
         eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).info();
         Thread.sleep(1);            // Expensive computation / external system

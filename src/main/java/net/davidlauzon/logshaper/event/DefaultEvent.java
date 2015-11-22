@@ -1,10 +1,10 @@
-package net.davidlauzon.slimevents.event;
+package net.davidlauzon.logshaper.event;
 
 
-import net.davidlauzon.slimevents.EventRegistry;
-import net.davidlauzon.slimevents.event.attribute.Attribute;
-import net.davidlauzon.slimevents.event.attribute.CounterAttribute;
-import net.davidlauzon.slimevents.event.attribute.TextAttribute;
+import net.davidlauzon.logshaper.EventRegistry;
+import net.davidlauzon.logshaper.event.attribute.Attribute;
+import net.davidlauzon.logshaper.event.attribute.CounterAttribute;
+import net.davidlauzon.logshaper.event.attribute.TextAttribute;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,7 +15,8 @@ import java.util.Map;
  *
  * Log levels hierarchy: FATAL, ERROR, WARN, INFO, DEBUG, TRACE
  */
-public class DefaultEvent implements Event {
+public class DefaultEvent implements Event
+{
     private EventRegistry registry;
     private Event parent;
 

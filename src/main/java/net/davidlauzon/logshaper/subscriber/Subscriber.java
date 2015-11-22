@@ -1,6 +1,6 @@
-package net.davidlauzon.slimevents.subscriber;
+package net.davidlauzon.logshaper.subscriber;
 
-import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.logshaper.event.Event;
 
 /**
  * Created by david on 15-11-05.

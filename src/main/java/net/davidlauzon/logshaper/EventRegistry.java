@@ -1,9 +1,9 @@
-package net.davidlauzon.slimevents;
+package net.davidlauzon.logshaper;
 
 
-import net.davidlauzon.slimevents.event.DefaultEvent;
-import net.davidlauzon.slimevents.event.Event;
-import net.davidlauzon.slimevents.subscriber.Subscriber;
+import net.davidlauzon.logshaper.event.DefaultEvent;
+import net.davidlauzon.logshaper.event.Event;
+import net.davidlauzon.logshaper.subscriber.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;

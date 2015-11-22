@@ -1,6 +1,6 @@
-package net.davidlauzon.slimevents.subscriber;
+package net.davidlauzon.logshaper.subscriber;
 
-import net.davidlauzon.slimevents.event.Event;
+import net.davidlauzon.logshaper.event.Event;
 import org.slf4j.Logger;
 
 /**

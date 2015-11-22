@@ -1,8 +1,8 @@
-package net.davidlauzon.slimevents.subscriber;
+package net.davidlauzon.logshaper.subscriber;
 
 import com.google.common.io.BaseEncoding;
-import net.davidlauzon.slimevents.event.Event;
-import net.davidlauzon.slimevents.event.attribute.Attribute;
+import net.davidlauzon.logshaper.event.Event;
+import net.davidlauzon.logshaper.event.attribute.Attribute;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
