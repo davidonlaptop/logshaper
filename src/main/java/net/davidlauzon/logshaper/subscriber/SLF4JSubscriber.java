@@ -18,26 +18,31 @@ public class SLF4JSubscriber extends AbstractSubscriber implements Subscriber
 
     @Override
     public void onTrace(Event event) {
-        log.trace( formatEvent(event) );
+        if (log.isTraceEnabled())
+            log.trace( formatEvent(event) );
     }
 
     @Override
     public void onDebug(Event event) {
-        log.debug( formatEvent(event) );
+        if (log.isDebugEnabled())
+            log.debug( formatEvent(event) );
     }
 
     @Override
     public void onInfo(Event event) {
-        log.info( formatEvent(event) );
+        if (log.isInfoEnabled())
+            log.info( formatEvent(event) );
     }
 
     @Override
     public void onWarn(Event event) {
-        log.warn( formatEvent(event) );
+        if (log.isWarnEnabled())
+            log.warn( formatEvent(event) );
     }
 
     @Override
     public void onError(Event event) {
-        log.error( formatEvent(event) );
+        if (log.isErrorEnabled())
+            log.error( formatEvent(event) );
     }
 }
