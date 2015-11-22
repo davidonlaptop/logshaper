@@ -1,7 +1,7 @@
 package net.davidlauzon.logshaper.event;
 
 
-import net.davidlauzon.logshaper.EventRegistry;
+import net.davidlauzon.logshaper.EventJournal;
 import net.davidlauzon.logshaper.event.attribute.Attribute;
 import net.davidlauzon.logshaper.event.attribute.CounterAttribute;
 import net.davidlauzon.logshaper.event.attribute.TextAttribute;
@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class DefaultEvent implements Event
 {
-    private EventRegistry registry;
+    private EventJournal journal;
     private Event parent;
 
     private String eventName;
@@ -30,15 +30,15 @@ public class DefaultEvent implements Event
 
 
     /**
-     * (Constructor reserved for internal use). See @EventRegistry for how to initialize the root event
+     * (Constructor reserved for internal use). See @EventJournal for how to initialize the root event
      *
-     * @param parent    The parent that triggered this new event.
+     * @param parent    The parent event that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
      */
-    public DefaultEvent(EventRegistry registry, String name, int depth, Event parent)
+    public DefaultEvent(EventJournal journal, String name, int depth, Event parent)
     {
-        this.registry   = registry;
+        this.journal    = journal;
         this.eventName  = name;
         this.depth      = depth;
         this.parent     = parent;
@@ -58,7 +58,7 @@ public class DefaultEvent implements Event
     @Override
     public Event createChild(String name)
     {
-        return new DefaultEvent( registry, name, depth + 1, this );
+        return new DefaultEvent( journal, name, depth + 1, this );
     }
 
 
@@ -113,51 +113,51 @@ public class DefaultEvent implements Event
 
 
     @Override
-    public Event trace()
+    public Event publishTrace()
     {
         if (state == EventState.NEW)
             start();
-        registry.publishTrace(this);
+        journal.publishTrace(this);
 
         return this;
     }
 
     @Override
-    public Event debug()
+    public Event publishDebug()
     {
         if (state == EventState.NEW)
             start();
-        registry.publishDebug(this);
+        journal.publishDebug(this);
 
         return this;
     }
 
     @Override
-    public Event info()
+    public Event publishInfo()
     {
         if (state == EventState.NEW)
             start();
-        registry.publishInfo(this);
+        journal.publishInfo(this);
 
         return this;
     }
 
     @Override
-    public Event warn()
+    public Event publishWarn()
     {
         if (state == EventState.NEW)
             start();
-        registry.publishWarn(this);
+        journal.publishWarn(this);
 
         return this;
     }
 
     @Override
-    public Event error()
+    public Event publishError()
     {
         if (state == EventState.NEW)
             start();
-        registry.publishError(this);
+        journal.publishError(this);
 
         return this;
     }

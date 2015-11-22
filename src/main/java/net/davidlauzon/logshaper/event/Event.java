@@ -45,15 +45,15 @@ public interface Event
      */
     public Event attr(String name, String value);
 
-    public Event trace();
+    public Event publishTrace();
 
-    public Event debug();
+    public Event publishDebug();
 
-    public Event info();
+    public Event publishInfo();
 
-    public Event warn();
+    public Event publishWarn();
 
-    public Event error();
+    public Event publishError();
 
     /**
      * Records the timestamp where this event occurred.

@@ -3,12 +3,11 @@ package net.davidlauzon.logshaper.event.attribute;
 /**
  * Created by david on 15-11-07.
  */
-public class CounterAttribute extends Attribute {
+public class CounterAttribute implements Attribute {
     protected long value;
 
     public CounterAttribute(long value) {
         this.value = value;
-        this.type = AttributeType.Counter;
     }
 
     public void increment(long increment) {
@@ -22,5 +21,10 @@ public class CounterAttribute extends Attribute {
     @Override
     public String stringValue() {
         return String.valueOf(value);
+    }
+
+    @Override
+    public boolean isQuoteable() {
+        return false;
     }
 }

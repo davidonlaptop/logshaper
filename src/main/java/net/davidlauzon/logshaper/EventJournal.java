@@ -11,12 +11,12 @@ import java.util.List;
 /**
  * Created by david on 15-11-04.
  */
-public class EventRegistry
+public class EventJournal
 {
     private List<Subscriber> subscribers;
 
 
-    public EventRegistry()
+    public EventJournal()
     {
         subscribers = new ArrayList<>();
     }

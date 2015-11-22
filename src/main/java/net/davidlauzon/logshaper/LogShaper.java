@@ -7,11 +7,11 @@ import net.davidlauzon.logshaper.event.Event;
  */
 public class LogShaper
 {
-    static private final EventRegistry defaultRegistry = new EventRegistry();
+    static private final EventJournal defaultJournal = new EventJournal();
 
 
-    static public final EventRegistry getDefaultRegistry() {
-        return defaultRegistry;
+    static public final EventJournal getDefaultJournal() {
+        return defaultJournal;
     }
 
 
@@ -22,6 +22,6 @@ public class LogShaper
      */
     static public Event createRootEvent( String name )
     {
-        return getDefaultRegistry().createRootEvent( name );
+        return getDefaultJournal().createRootEvent( name );
     }
 }

@@ -18,7 +18,7 @@ public class LogShaperTest
     @BeforeClass static public void setUp() throws Exception
     {
         subscriber  = new SubstriberMock();
-        LogShaper.getDefaultRegistry().subscribe( subscriber  );
+        LogShaper.getDefaultJournal().subscribe( subscriber  );
     }
 
     @AfterClass static public void tearDown() throws Exception
@@ -30,19 +30,19 @@ public class LogShaperTest
     @Test public void testBroadcastLevel()
     {
         // ERROR > WARN > INFO > DEBUG > TRACE
-        LogShaper.createRootEvent("TestBroadcast").error();
+        LogShaper.createRootEvent("TestBroadcast").publishError();
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
-        LogShaper.createRootEvent("TestBroadcast").warn();
+        LogShaper.createRootEvent("TestBroadcast").publishWarn();
         assertThat( subscriber.getLastMessage(), startsWith("WARN") );
 
-        LogShaper.createRootEvent("TestBroadcast").info();
+        LogShaper.createRootEvent("TestBroadcast").publishInfo();
         assertThat( subscriber.getLastMessage(), startsWith("INFO") );
 
-        LogShaper.createRootEvent("TestBroadcast").debug();
+        LogShaper.createRootEvent("TestBroadcast").publishDebug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
 
-        LogShaper.createRootEvent("TestBroadcast").trace();
+        LogShaper.createRootEvent("TestBroadcast").publishTrace();
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
@@ -50,10 +50,10 @@ public class LogShaperTest
     {
         Event event;
 
-        event = LogShaper.createRootEvent("TestStopDuration").info();
+        event = LogShaper.createRootEvent("TestStopDuration").publishInfo();
         assertThat( subscriber.getLastMessage(), containsString("started") );
 
-        event.stop().info();
+        event.stop().publishInfo();
         assertThat( subscriber.getLastMessage(), containsPattern("ended in [0-9.]+s") );
     }
 
@@ -63,7 +63,7 @@ public class LogShaperTest
 
         event = LogShaper.createRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
-                .info();
+                .publishInfo();
         assertThat( subscriber.getLastMessage(), allOf(
                 containsString("KEY1=\"val1\""),
                 containsString("KEY2=\"val2\"")
@@ -71,7 +71,7 @@ public class LogShaperTest
 
         event.stop()
                 .attr("KEY3", "stopped")
-                .info();
+                .publishInfo();
         assertThat( subscriber.getLastMessage(), allOf(
                 containsString("KEY1=\"val1\""),
                 containsString("KEY2=\"val2\""),
@@ -87,24 +87,24 @@ public class LogShaperTest
         Event eventChild2Child2;
         Event eventChild2Child3;
 
-        eventParent = LogShaper.createRootEvent("Request").attr("ACTION", "Person.Update").info();
+        eventParent = LogShaper.createRootEvent("Request").attr("ACTION", "Person.Update").publishInfo();
 
-        eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).info();
+        eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).publishInfo();
         Thread.sleep(1);            // Expensive computation / external system
-        eventChild1.stop().info();
+        eventChild1.stop().publishInfo();
 
-        eventChild2       = eventParent.createChild("Resource processing").info();
-        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY", "SELECT FROM ...").info();
+        eventChild2       = eventParent.createChild("Resource processing").publishInfo();
+        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY", "SELECT FROM ...").publishInfo();
         Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child1.stop().info();
-        eventChild2Child2 = eventChild2.createChild("BIRT").info();
+        eventChild2Child1.stop().publishInfo();
+        eventChild2Child2 = eventChild2.createChild("BIRT").publishInfo();
         Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child2.stop().info();
-        eventChild2.stop().info();
-        eventChild2Child3 = eventChild2.createChild("SQL").attr("QUERY", "UPDATE ...").info();
+        eventChild2Child2.stop().publishInfo();
+        eventChild2.stop().publishInfo();
+        eventChild2Child3 = eventChild2.createChild("SQL").attr("QUERY", "UPDATE ...").publishInfo();
         Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child3.stop().info();
+        eventChild2Child3.stop().publishInfo();
 
-        eventParent.stop().info();
+        eventParent.stop().publishInfo();
     }
 }

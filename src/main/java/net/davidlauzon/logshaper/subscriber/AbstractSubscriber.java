@@ -26,26 +26,15 @@ public class AbstractSubscriber
         attributesList = new ArrayList<>(attributesMap.size());
 
         Attribute attribute;
-        String attributeName;
 
         for ( Map.Entry<String,Attribute> entry : attributesMap.entrySet() )
         {
-            attributeName = entry.getKey();
-            attribute     = entry.getValue();
+            attribute = entry.getValue();
 
-            switch (attribute.type())
-            {
-                case Text:
-                    attributesList.add( entry.getKey() + "=\"" + attribute.stringValue() + '"' );
-                    break;
-
-                case Counter:
-                    attributesList.add( entry.getKey() + "=" + attribute.stringValue() );
-                    break;
-
-                default:
-                    throw new RuntimeException("Unsupported attribute type: '" + attribute.type() + "'");
-            }
+            if ( attribute.isQuoteable() )
+                attributesList.add( entry.getKey() + "=\"" + attribute.stringValue() + '"');
+            else
+                attributesList.add( entry.getKey() + "=" + attribute.stringValue() );
         }
 
         switch (event.state()) {

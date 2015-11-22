@@ -1,15 +1,14 @@
 package net.davidlauzon.logshaper.event.attribute;
 
 /**
- * Created by david on 15-11-07.
+ * Created by david on 15-11-22.
  */
-public abstract class Attribute
+public interface Attribute
 {
-    protected AttributeType type;
+    String stringValue();
 
-    public AttributeType type() {
-        return type;
-    }
-
-    public abstract String stringValue();
+    /**
+     * @return True if this attribue's value should be enclosed in quotes
+     */
+    boolean isQuoteable();
 }
