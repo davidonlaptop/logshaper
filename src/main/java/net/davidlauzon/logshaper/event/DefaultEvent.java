@@ -69,7 +69,7 @@ public class DefaultEvent implements Event
      *
      * To decrement the counter, just send a negative value.
      *
-     * Exemples: "Duration.DB", "Duration.Alfresco", "Duration.Birt", "Duration.JsonParsing", "ComputingBudget"
+     * Exemples: "DB.Duration", "Alfresco.Duration", "BIRT.Duration", "JSON.Parsing.Duration", "ComputingBudget.Duration"
      *
      * @param name          The name of the counter.
      * @param value         The value to add to the counter.
@@ -199,7 +199,7 @@ public class DefaultEvent implements Event
 
     protected String getDurationCounterName()
     {
-        return this.eventName.replace(' ', '.') + ".Duration";
+        return this.eventName.replace(' ', '.') + ".MS";
     }
 
 
