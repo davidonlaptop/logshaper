@@ -2,9 +2,9 @@ package net.davidlauzon.logshaper.event;
 
 
 import net.davidlauzon.logshaper.EventJournal;
-import net.davidlauzon.logshaper.event.attribute.Attribute;
-import net.davidlauzon.logshaper.event.attribute.CounterAttribute;
-import net.davidlauzon.logshaper.event.attribute.TextAttribute;
+import net.davidlauzon.logshaper.attribute.Attribute;
+import net.davidlauzon.logshaper.attribute.CounterAttribute;
+import net.davidlauzon.logshaper.attribute.TextAttribute;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package net.davidlauzon.logshaper.event.attribute;
+package net.davidlauzon.logshaper.attribute;
 
 /**
  * Created by david on 15-11-07.

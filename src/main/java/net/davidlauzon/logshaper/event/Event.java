@@ -1,6 +1,6 @@
 package net.davidlauzon.logshaper.event;
 
-import net.davidlauzon.logshaper.event.attribute.Attribute;
+import net.davidlauzon.logshaper.attribute.Attribute;
 
 import java.util.Map;
 
