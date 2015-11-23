@@ -22,6 +22,8 @@ public class DefaultEvent implements Event
 
     private String eventName;
     private int depth;
+
+    private boolean isPonctual;
     private long eventStartedAtMS;
     private long eventEndedAtMS;
     private EventState state;
@@ -32,6 +34,7 @@ public class DefaultEvent implements Event
     /**
      * (Constructor reserved for internal use). See @EventJournal for how to initialize the root event
      *
+     * @param journal   The journal where this event will be logged to
      * @param parent    The parent event that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
@@ -43,9 +46,7 @@ public class DefaultEvent implements Event
         this.depth      = depth;
         this.parent     = parent;
         this.attributes = new LinkedHashMap<>();
-
-        eventStartedAtMS = System.currentTimeMillis();
-        state            = EventState.NEW;
+        state           = EventState.NEW;
     }
 
 
@@ -59,6 +60,19 @@ public class DefaultEvent implements Event
     public Event createChild(String name)
     {
         return new DefaultEvent( journal, name, depth + 1, this );
+    }
+
+
+    /**
+     * Starts a new child event of the current event
+     *
+     * @param name The name of the event
+     * @return the event newly created
+     */
+    @Override
+    public Event createChild( String name, Throwable throwable )
+    {
+        return new ThrowableEvent( journal, name, depth + 1, this, throwable );
     }
 
 
@@ -248,5 +262,24 @@ public class DefaultEvent implements Event
         return depth;
     }
 
+    @Override
+    public Event ponctualEvent()
+    {
+        this.isPonctual     = true;
+        this.state          = EventState.ENDED;
+        eventStartedAtMS    = System.currentTimeMillis();
+        eventEndedAtMS      = eventStartedAtMS;
+
+        return this;
+    }
+
+    @Override
+    public boolean isPonctual() {
+        return this.isPonctual;
+    }
+
+    protected EventJournal journal() {
+        return this.journal;
+    }
 
 }

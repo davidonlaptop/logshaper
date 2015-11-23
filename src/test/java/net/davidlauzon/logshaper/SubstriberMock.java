@@ -19,9 +19,23 @@ public class SubstriberMock extends AbstractSubscriber implements Subscriber
     }
 
     @Override
+    public void onTrace(Event event, Throwable throwable)
+    {
+        onTrace(event);
+        throwable.printStackTrace();
+    }
+
+    @Override
     public void onDebug(Event event)
     {
         publish("DEBUG " + formatEvent(event));
+    }
+
+    @Override
+    public void onDebug(Event event, Throwable throwable)
+    {
+        onDebug(event);
+        throwable.printStackTrace();
     }
 
     @Override
@@ -31,15 +45,36 @@ public class SubstriberMock extends AbstractSubscriber implements Subscriber
     }
 
     @Override
+    public void onInfo(Event event, Throwable throwable)
+    {
+        onInfo(event);
+        throwable.printStackTrace();
+    }
+
+    @Override
     public void onWarn(Event event)
     {
         publish( "WARN " + formatEvent(event));
     }
 
     @Override
+    public void onWarn(Event event, Throwable throwable)
+    {
+        onWarn(event);
+        throwable.printStackTrace();
+    }
+
+    @Override
     public void onError(Event event)
     {
         publish( "ERROR " + formatEvent(event));
+    }
+
+    @Override
+    public void onError(Event event, Throwable throwable)
+    {
+        onError(event);
+        throwable.printStackTrace();
     }
 
 

@@ -5,10 +5,10 @@ package net.davidlauzon.logshaper.attribute;
  */
 public interface Attribute
 {
-    String stringValue();
+    public String stringValue();
 
     /**
      * @return True if this attribue's value should be enclosed in quotes
      */
-    boolean isQuoteable();
+    public boolean isQuoteable();
 }

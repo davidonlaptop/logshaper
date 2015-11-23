@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 /**
  * Created by david on 15-11-05.
  */
-public class SLF4JSubscriber extends AbstractSubscriber implements Subscriber
+public class SLF4JSubscriber extends AbstractSubscriber
 {
     public Logger log;
 
@@ -17,32 +17,72 @@ public class SLF4JSubscriber extends AbstractSubscriber implements Subscriber
     }
 
     @Override
-    public void onTrace(Event event) {
+    public void onTrace(Event event)
+    {
         if (log.isTraceEnabled())
             log.trace( formatEvent(event) );
     }
 
     @Override
-    public void onDebug(Event event) {
+    public void onTrace(Event event, Throwable throwable)
+    {
+        if (log.isTraceEnabled())
+            log.trace( formatEvent(event), throwable );
+    }
+
+    @Override
+    public void onDebug(Event event)
+    {
         if (log.isDebugEnabled())
             log.debug( formatEvent(event) );
     }
 
     @Override
-    public void onInfo(Event event) {
-        if (log.isInfoEnabled())
-            log.info( formatEvent(event) );
+    public void onDebug(Event event, Throwable throwable)
+    {
+        if (log.isDebugEnabled())
+            log.debug( formatEvent(event), throwable );
     }
 
     @Override
-    public void onWarn(Event event) {
+    public void onInfo(Event event)
+    {
+        if (log.isInfoEnabled())
+            log.info(formatEvent(event));
+    }
+
+    @Override
+    public void onInfo(Event event, Throwable throwable)
+    {
+        if (log.isInfoEnabled())
+            log.info( formatEvent(event), throwable );
+    }
+
+    @Override
+    public void onWarn(Event event)
+    {
         if (log.isWarnEnabled())
             log.warn( formatEvent(event) );
     }
 
     @Override
-    public void onError(Event event) {
+    public void onWarn(Event event, Throwable throwable)
+    {
+        if (log.isWarnEnabled())
+            log.warn( formatEvent(event), throwable );
+    }
+
+    @Override
+    public void onError(Event event)
+    {
         if (log.isErrorEnabled())
             log.error( formatEvent(event) );
+    }
+
+    @Override
+    public void onError(Event event, Throwable throwable)
+    {
+        if (log.isErrorEnabled())
+            log.error( formatEvent(event), throwable );
     }
 }

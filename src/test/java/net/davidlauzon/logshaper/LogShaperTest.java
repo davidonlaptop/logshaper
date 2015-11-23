@@ -3,6 +3,10 @@ package net.davidlauzon.logshaper;
 import net.davidlauzon.logshaper.event.Event;
 import org.junit.*;
 
+import java.io.IOError;
+import java.io.IOException;
+import java.util.IllegalFormatException;
+
 import static com.jcabi.matchers.RegexMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -20,6 +24,7 @@ public class LogShaperTest
         subscriber  = new SubstriberMock();
         LogShaper.getDefaultJournal().subscribe( subscriber  );
     }
+
 
     @AfterClass static public void tearDown() throws Exception
     {
@@ -46,6 +51,7 @@ public class LogShaperTest
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
+
     @Test public void testStopDuration()
     {
         Event event;
@@ -56,6 +62,7 @@ public class LogShaperTest
         event.stop().publishInfo();
         assertThat( subscriber.getLastMessage(), containsPattern("ended in [0-9.]+s") );
     }
+
 
     @Test public void testEventAttributes()
     {
@@ -78,6 +85,7 @@ public class LogShaperTest
                 containsString("KEY3=\"stopped\"")
         ));
     }
+
 
     @Test public void testEventHierarchy() throws InterruptedException {
         Event eventParent;
@@ -106,5 +114,47 @@ public class LogShaperTest
         eventChild2Child3.stop().publishInfo();
 
         eventParent.stop().publishInfo();
+
+        try {
+            throw new IOException("my message", new IllegalArgumentException("my illegal argument"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test public void testPonctualEvent()
+    {
+        Event event;
+
+        event = LogShaper.createRootEvent("TestPonctualEvent")
+                .ponctualEvent()
+                .attr("KEY1", "val1").attr("KEY2", "val2")
+                .publishInfo();
+        assertThat( subscriber.getLastMessage(), allOf(
+                containsString("KEY1=\"val1\""),
+                containsString("KEY2=\"val2\""),
+                containsString("occured")
+        ));
+
+
+        event = LogShaper.createRootEvent("TestPonctualEventParent").attr("KEY1", "val1").publishInfo();
+        event.createChild("TestPonctualEventChild").ponctualEvent().publishInfo();
+        assertThat(subscriber.getLastMessage(), containsString("occured") );
+        event.stop().publishInfo();
+    }
+
+
+    @Test public void testThrowableEvent()
+    {
+        Event event;
+
+        event = LogShaper.createRootEvent("TestThrowableEvent")
+                .attr("KEY1", "val1").attr("KEY2", "val2")
+                .publishInfo();
+
+        event.createChild("TestThrowableEventException", new Throwable("Something got wrong")).publishInfo();
+
+        event.stop();
     }
 }

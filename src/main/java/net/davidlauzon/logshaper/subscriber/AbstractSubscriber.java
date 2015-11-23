@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by david on 15-11-06.
  */
-public class AbstractSubscriber
+public abstract class AbstractSubscriber implements Subscriber
 {
     static public final String PROVENANCE_SEP = ".";
 
@@ -37,9 +37,17 @@ public class AbstractSubscriber
                 attributesList.add( entry.getKey() + "=" + attribute.stringValue() );
         }
 
+        if ( event.isPonctual() ) {
+            attributesList.add("Provenance=\"" + getEventProvenance(event) + '"');
+            return String.format("%s%s occured. %s",
+                    getDepthPrefix(event),
+                    event.eventName(),
+                    attributesList
+            );
+        } else {
         switch (event.state()) {
             case STARTED:
-                attributesList.add( "Provenance=\"" + getEventProvenance(event) + '"' );
+                attributesList.add("Provenance=\"" + getEventProvenance(event) + '"');
                 return String.format("%s%s started. %s",
                         getDepthPrefix(event),
                         event.eventName(),
@@ -47,7 +55,7 @@ public class AbstractSubscriber
                 );
 
             case ENDED:
-                attributesList.add( "Provenance=\"" + getEventProvenance(event) + '"' );
+                attributesList.add("Provenance=\"" + getEventProvenance(event) + '"');
                 return String.format("%s%s ended in %.3fs. %s",
                         getDepthPrefix(event),
                         event.eventName(),
@@ -58,6 +66,7 @@ public class AbstractSubscriber
             default:
                 // State NEW
                 return null;
+        }
         }
     }
 

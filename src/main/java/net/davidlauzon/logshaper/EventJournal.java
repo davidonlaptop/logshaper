@@ -35,41 +35,66 @@ public class EventJournal
 
 
     /**
-     * package-private (reserved for internal use)
+     * Reserved for internal use
       * @param event
      */
     public void publishTrace( Event event )
     {
-        for (Subscriber subscriber : subscribers) {
+        for (Subscriber subscriber : subscribers)
             subscriber.onTrace( event );
-        }
+    }
+
+    public void publishTrace( Event event, Throwable throwable )
+    {
+        for (Subscriber subscriber : subscribers)
+            subscriber.onTrace( event, throwable );
     }
 
     public void publishDebug( Event event )
     {
-        for (Subscriber subscriber : subscribers) {
-            subscriber.onDebug(event);
-        }
+        for (Subscriber subscriber : subscribers)
+            subscriber.onDebug( event );
+    }
+
+    public void publishDebug( Event event, Throwable throwable )
+    {
+        for (Subscriber subscriber : subscribers)
+            subscriber.onDebug( event, throwable );
     }
 
     public void publishInfo( Event event )
     {
-        for (Subscriber subscriber : subscribers) {
-            subscriber.onInfo(event);
-        }
+        for (Subscriber subscriber : subscribers)
+            subscriber.onInfo( event );
+    }
+
+    public void publishInfo( Event event, Throwable throwable )
+    {
+        for (Subscriber subscriber : subscribers)
+            subscriber.onInfo( event, throwable );
     }
 
     public void publishWarn( Event event )
     {
-        for (Subscriber subscriber : subscribers) {
-            subscriber.onWarn(event);
-        }
+        for (Subscriber subscriber : subscribers)
+            subscriber.onWarn( event );
+    }
+
+    public void publishWarn( Event event, Throwable throwable )
+    {
+        for (Subscriber subscriber : subscribers)
+            subscriber.onWarn( event, throwable );
     }
 
     public void publishError( Event event )
     {
-        for (Subscriber subscriber : subscribers) {
-            subscriber.onError(event);
-        }
+        for (Subscriber subscriber : subscribers)
+            subscriber.onError( event );
+    }
+
+    public void publishError( Event event, Throwable throwable )
+    {
+        for (Subscriber subscriber : subscribers)
+            subscriber.onError( event, throwable );
     }
 }

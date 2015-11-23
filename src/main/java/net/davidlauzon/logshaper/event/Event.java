@@ -18,6 +18,15 @@ public interface Event
     public Event createChild(String name);
 
     /**
+     * Starts a new "Throwable" child event of the current event
+     *
+     * @param name The name of the event
+     * @param throwable the Throwable Exception or Error
+     * @return the event newly created
+     */
+    public Event createChild(String name, Throwable throwable);
+
+    /**
      * Creates or updates a counter with the given name and adds it the specified value.
      *
      * The Counter is automatically propagated recursively to all the parents.
@@ -90,4 +99,14 @@ public interface Event
     public EventState state();
 
     public int depth();
+
+    /**
+     * Indicates that this event is a ponctualEvent event.
+     *
+     * Ponctual: An action considered as having no temporal duration. http://www.thefreedictionary.com/punctual
+     *
+     * @return Event
+     */
+    public Event ponctualEvent();
+    public boolean isPonctual();
 }
