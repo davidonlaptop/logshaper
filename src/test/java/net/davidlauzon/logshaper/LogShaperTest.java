@@ -3,13 +3,10 @@ package net.davidlauzon.logshaper;
 import net.davidlauzon.logshaper.event.Event;
 import org.junit.*;
 
-import java.io.IOError;
-import java.io.IOException;
-import java.util.IllegalFormatException;
-
 import static com.jcabi.matchers.RegexMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
 
 /**
  * Created by david on 15-11-06.
@@ -114,12 +111,6 @@ public class LogShaperTest
         eventChild2Child3.stop().publishInfo();
 
         eventParent.stop().publishInfo();
-
-        try {
-            throw new IOException("my message", new IllegalArgumentException("my illegal argument"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -155,6 +146,6 @@ public class LogShaperTest
 
         event.createChild("TestThrowableEventException", new Throwable("Something got wrong")).publishInfo();
 
-        event.stop();
+        event.stop().publishInfo();
     }
 }
