@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.davidlauzon</groupId>
-    <artifactId>slimevents</artifactId>
+    <artifactId>logshaper</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.4</version>
 
     <name>slimevents</name>
     <url>https://github.com/davidonlaptop/slimevents</url>
