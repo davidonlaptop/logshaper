@@ -5,17 +5,17 @@
     <groupId>net.davidlauzon</groupId>
     <artifactId>logshaper</artifactId>
     <packaging>jar</packaging>
-    <version>0.4</version>
+    <version>0.4.1</version>
 
     <name>slimevents</name>
-    <url>https://github.com/davidonlaptop/slimevents</url>
+    <url>https://github.com/davidonlaptop/logshaper</url>
     <description>Lightweight library allowing to log events and metrics in a structured and generic way to facilitate
         their automated analysis using publish-subscribe model</description>
 
     <licenses>
         <license>
             <name>Apache License</name>
-            <url>https://raw.github.com/davidonlaptop/slimevents/master/LICENSE</url>
+            <url>https://raw.github.com/davidonlaptop/logshaper/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -30,9 +30,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:davidonlaptop/slimevents.git</connection>
-        <developerConnection>scm:git:git@github.com:davidonlaptop/slimevents.git</developerConnection>
-        <url>git@github.com:davidonlaptop/slimevents.git</url>
+        <connection>scm:git:git@github.com:davidonlaptop/logshaper.git</connection>
+        <developerConnection>scm:git:git@github.com:davidonlaptop/logshaper.git</developerConnection>
+        <url>git@github.com:davidonlaptop/logshaper.git</url>
     </scm>
 
 

@@ -16,10 +16,10 @@ public class ThrowableEvent extends DefaultEvent
      * @param journal   The journal where this event will be logged to
      * @param parent    The parent event that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
-     * @param name      The name of the Event
+     * @param name      The name of the LogEvent
      * @param throwable The throwable exception or error to be thrown
      */
-    public ThrowableEvent(EventJournal journal, String name, int depth, Event parent, Throwable throwable)
+    public ThrowableEvent(EventJournal journal, String name, int depth, LogEvent parent, Throwable throwable)
     {
         super( journal, name, depth, parent );
 
@@ -29,7 +29,7 @@ public class ThrowableEvent extends DefaultEvent
 
 
     @Override
-    public Event publishTrace()
+    public LogEvent publishTrace()
     {
         journal().publishTrace( this, throwable );
 
@@ -37,7 +37,7 @@ public class ThrowableEvent extends DefaultEvent
     }
 
     @Override
-    public Event publishDebug()
+    public LogEvent publishDebug()
     {
         journal().publishDebug( this, throwable );
 
@@ -45,7 +45,7 @@ public class ThrowableEvent extends DefaultEvent
     }
 
     @Override
-    public Event publishInfo()
+    public LogEvent publishInfo()
     {
         journal().publishInfo( this, throwable );
 
@@ -53,7 +53,7 @@ public class ThrowableEvent extends DefaultEvent
     }
 
     @Override
-    public Event publishWarn()
+    public LogEvent publishWarn()
     {
         journal().publishWarn( this, throwable );
 
@@ -61,7 +61,7 @@ public class ThrowableEvent extends DefaultEvent
     }
 
     @Override
-    public Event publishError()
+    public LogEvent publishError()
     {
         journal().publishError( this, throwable );
 

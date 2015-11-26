@@ -1,7 +1,7 @@
 package net.davidlauzon.logshaper.subscriber;
 
 import com.google.common.io.BaseEncoding;
-import net.davidlauzon.logshaper.event.Event;
+import net.davidlauzon.logshaper.event.LogEvent;
 import net.davidlauzon.logshaper.attribute.Attribute;
 
 import java.nio.ByteBuffer;
@@ -13,12 +13,12 @@ import java.util.Map;
 /**
  * Created by david on 15-11-06.
  */
-public abstract class AbstractSubscriber implements Subscriber
+public abstract class AbstractSubscriber implements LogSubscriber
 {
     static public final String PROVENANCE_SEP = ".";
 
 
-    protected String formatEvent(Event event) {
+    protected String formatEvent(LogEvent event) {
         Map<String, Attribute> attributesMap;
         List<String> attributesList;
 
@@ -71,16 +71,16 @@ public abstract class AbstractSubscriber implements Subscriber
     }
 
 
-    protected String getDepthPrefix( Event event )
+    protected String getDepthPrefix( LogEvent event )
     {
         // Returns a string of N spaces length, where N is the depth level of the event to the root event
         return CharBuffer.allocate( event.depth() ).toString().replace( '\0', ' ' );
     }
 
-    protected String getEventProvenance( Event event )
+    protected String getEventProvenance( LogEvent event )
     {
         StringBuilder provenance = new StringBuilder().append( getObjectHexIdentity(event) );
-        Event parent = event.parent();
+        LogEvent parent = event.parent();
 
         while (parent != null)
         {

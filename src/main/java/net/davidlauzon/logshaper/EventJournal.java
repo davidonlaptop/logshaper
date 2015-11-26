@@ -2,8 +2,8 @@ package net.davidlauzon.logshaper;
 
 
 import net.davidlauzon.logshaper.event.DefaultEvent;
-import net.davidlauzon.logshaper.event.Event;
-import net.davidlauzon.logshaper.subscriber.Subscriber;
+import net.davidlauzon.logshaper.event.LogEvent;
+import net.davidlauzon.logshaper.subscriber.LogSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class EventJournal
 {
-    private List<Subscriber> subscribers;
+    private List<LogSubscriber> subscribers;
 
 
     public EventJournal()
@@ -22,13 +22,13 @@ public class EventJournal
     }
 
 
-    public void subscribe( Subscriber subscriber )
+    public void subscribe( LogSubscriber subscriber )
     {
         subscribers.add( subscriber );
     }
 
 
-    public Event createRootEvent(String name)
+    public LogEvent createRootEvent(String name)
     {
         return new DefaultEvent( this, name, 0, null );
     }
@@ -38,63 +38,63 @@ public class EventJournal
      * Reserved for internal use
       * @param event
      */
-    public void publishTrace( Event event )
+    public void publishTrace( LogEvent event )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onTrace( event );
     }
 
-    public void publishTrace( Event event, Throwable throwable )
+    public void publishTrace( LogEvent event, Throwable throwable )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onTrace( event, throwable );
     }
 
-    public void publishDebug( Event event )
+    public void publishDebug( LogEvent event )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onDebug( event );
     }
 
-    public void publishDebug( Event event, Throwable throwable )
+    public void publishDebug( LogEvent event, Throwable throwable )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onDebug( event, throwable );
     }
 
-    public void publishInfo( Event event )
+    public void publishInfo( LogEvent event )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onInfo( event );
     }
 
-    public void publishInfo( Event event, Throwable throwable )
+    public void publishInfo( LogEvent event, Throwable throwable )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onInfo( event, throwable );
     }
 
-    public void publishWarn( Event event )
+    public void publishWarn( LogEvent event )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onWarn( event );
     }
 
-    public void publishWarn( Event event, Throwable throwable )
+    public void publishWarn( LogEvent event, Throwable throwable )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onWarn( event, throwable );
     }
 
-    public void publishError( Event event )
+    public void publishError( LogEvent event )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onError( event );
     }
 
-    public void publishError( Event event, Throwable throwable )
+    public void publishError( LogEvent event, Throwable throwable )
     {
-        for (Subscriber subscriber : subscribers)
+        for (LogSubscriber subscriber : subscribers)
             subscriber.onError( event, throwable );
     }
 }

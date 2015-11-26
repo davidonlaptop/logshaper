@@ -1,6 +1,6 @@
 package net.davidlauzon.logshaper;
 
-import net.davidlauzon.logshaper.event.Event;
+import net.davidlauzon.logshaper.event.LogEvent;
 import org.junit.*;
 
 import static com.jcabi.matchers.RegexMatchers.*;
@@ -13,12 +13,12 @@ import static org.junit.Assert.*;
  */
 public class LogShaperTest
 {
-    static private SubstriberMock subscriber;
+    static private SubscriberMock subscriber;
 
 
     @BeforeClass static public void setUp() throws Exception
     {
-        subscriber  = new SubstriberMock();
+        subscriber  = new SubscriberMock();
         LogShaper.getDefaultJournal().subscribe( subscriber  );
     }
 
@@ -51,7 +51,7 @@ public class LogShaperTest
 
     @Test public void testStopDuration()
     {
-        Event event;
+        LogEvent event;
 
         event = LogShaper.createRootEvent("TestStopDuration").publishInfo();
         assertThat( subscriber.getLastMessage(), containsString("started") );
@@ -63,7 +63,7 @@ public class LogShaperTest
 
     @Test public void testEventAttributes()
     {
-        Event event;
+        LogEvent event;
 
         event = LogShaper.createRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
@@ -91,15 +91,15 @@ public class LogShaperTest
      */
     @Test public void testEventHierarchy() throws InterruptedException
     {
-        Event requestEvent;
-        Event jsonDecodeEvent;
-        Event dbTransactionEvent;
-        Event dbSelectEvent;
-        Event dbUpdateEvent;
-        Event businessRuleEvent;
-        Event dbUpdate2Event;
-        Event thirdPartyAppEvent;
-        Event jsonEncodeEvent;
+        LogEvent requestEvent;
+        LogEvent jsonDecodeEvent;
+        LogEvent dbTransactionEvent;
+        LogEvent dbSelectEvent;
+        LogEvent dbUpdateEvent;
+        LogEvent businessRuleEvent;
+        LogEvent dbUpdate2Event;
+        LogEvent thirdPartyAppEvent;
+        LogEvent jsonEncodeEvent;
 
         // Level: 0 (root)
         requestEvent = LogShaper.createRootEvent("Request")
@@ -173,7 +173,7 @@ public class LogShaperTest
 
     @Test public void testPonctualEvent()
     {
-        Event event;
+        LogEvent event;
 
         event = LogShaper.createRootEvent("TestPonctualEvent")
                 .ponctualEvent()
@@ -195,7 +195,7 @@ public class LogShaperTest
 
     @Test public void testThrowableEvent()
     {
-        Event event;
+        LogEvent event;
 
         event = LogShaper.createRootEvent("TestThrowableEvent")
                 .attr("KEY1", "val1").attr("KEY2", "val2")

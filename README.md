@@ -76,7 +76,7 @@ Note: the code that generated the results above can be found in the [`LogShaperT
 - A client can be notified of the events by **subscribing** to a journal;
 - The class `SLF4JSubscriber` provides **compatibility with existing logging framework** via the SLF4J interface (logback, log4j, etc.);
 - Support for the **standard log levels**: `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`;
-- If needed to capture the events in a custom data store, you can write your custom handling by implementing the `Subscriber` interface;
+- If needed to capture the events in a custom data store, you can write your custom handling by implementing the `LogSubscriber` interface;
 
 
 ## Getting started

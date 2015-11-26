@@ -1,6 +1,6 @@
 package net.davidlauzon.logshaper;
 
-import net.davidlauzon.logshaper.event.Event;
+import net.davidlauzon.logshaper.event.LogEvent;
 
 /**
  * Created by david on 15-11-06.
@@ -20,7 +20,7 @@ public class LogShaper
      * @param name The name of the event
      * @return the event
      */
-    static public Event createRootEvent( String name )
+    static public LogEvent createRootEvent( String name )
     {
         return getDefaultJournal().createRootEvent( name );
     }

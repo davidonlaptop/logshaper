@@ -15,10 +15,10 @@ import java.util.Map;
  *
  * Log levels hierarchy: ERROR, WARN, INFO, DEBUG, TRACE
  */
-public class DefaultEvent implements Event
+public class DefaultEvent implements LogEvent
 {
     private EventJournal journal;
-    private Event parent;
+    private LogEvent parent;
 
     private String eventName;
     private int depth;
@@ -39,7 +39,7 @@ public class DefaultEvent implements Event
      * @param depth     The level of depth from the root event (0 if no parent)
      * @param name      The name of the Event
      */
-    public DefaultEvent(EventJournal journal, String name, int depth, Event parent)
+    public DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent)
     {
         this.journal    = journal;
         this.eventName  = name;
@@ -57,7 +57,7 @@ public class DefaultEvent implements Event
      * @return the event newly created
      */
     @Override
-    public Event createChild(String name)
+    public LogEvent createChild(String name)
     {
         return new DefaultEvent( journal, name, depth + 1, this );
     }
@@ -70,7 +70,7 @@ public class DefaultEvent implements Event
      * @return the event newly created
      */
     @Override
-    public Event createChild( String name, Throwable throwable )
+    public LogEvent createChild( String name, Throwable throwable )
     {
         return new ThrowableEvent( journal, name, depth + 1, this, throwable );
     }
@@ -87,10 +87,10 @@ public class DefaultEvent implements Event
      *
      * @param name          The name of the counter.
      * @param value         The value to add to the counter.
-     * @return Event    The current counter.
+     * @return LogEvent    The current counter.
      */
     @Override
-    public Event count(String name, long value)
+    public LogEvent count(String name, long value)
     {
         CounterAttribute attr = ((CounterAttribute) attributes.get(name));
         if (attr == null)
@@ -115,10 +115,10 @@ public class DefaultEvent implements Event
      *
      * @param name          The attribute name
      * @param value         The attribute value
-     * @return Event    this event
+     * @return LogEvent    this event
      */
     @Override
-    public Event attr(String name, String value)
+    public LogEvent attr(String name, String value)
     {
         this.attributes.put( name, new TextAttribute(value) );
 
@@ -127,7 +127,7 @@ public class DefaultEvent implements Event
 
 
     @Override
-    public Event publishTrace()
+    public LogEvent publishTrace()
     {
         if (state == EventState.NEW)
             start();
@@ -137,7 +137,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event publishDebug()
+    public LogEvent publishDebug()
     {
         if (state == EventState.NEW)
             start();
@@ -147,7 +147,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event publishInfo()
+    public LogEvent publishInfo()
     {
         if (state == EventState.NEW)
             start();
@@ -157,7 +157,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event publishWarn()
+    public LogEvent publishWarn()
     {
         if (state == EventState.NEW)
             start();
@@ -167,7 +167,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event publishError()
+    public LogEvent publishError()
     {
         if (state == EventState.NEW)
             start();
@@ -182,10 +182,10 @@ public class DefaultEvent implements Event
      *
      * No need to handle this manually, unless you don't want to broadcast the start event.
      *
-     * @return Event    this event
+     * @return LogEvent    this event
      */
     @Override
-    public Event start()
+    public LogEvent start()
     {
         state               = EventState.STARTED;
         eventStartedAtMS    = System.currentTimeMillis();
@@ -196,10 +196,10 @@ public class DefaultEvent implements Event
     /**
      * Records the timestamp where this event occurred AND returns the parent of this event.
      *
-     * @return Event the parent of this event
+     * @return LogEvent the parent of this event
      */
     @Override
-    public Event stop()
+    public LogEvent stop()
     {
         eventEndedAtMS  = System.currentTimeMillis();
         state           = EventState.ENDED;
@@ -241,7 +241,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event parent() {
+    public LogEvent parent() {
         return parent;
     }
 
@@ -263,7 +263,7 @@ public class DefaultEvent implements Event
     }
 
     @Override
-    public Event ponctualEvent()
+    public LogEvent ponctualEvent()
     {
         this.isPonctual     = true;
         this.state          = EventState.ENDED;

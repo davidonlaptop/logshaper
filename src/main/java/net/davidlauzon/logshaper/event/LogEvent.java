@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by david on 15-11-07.
  */
-public interface Event
+public interface LogEvent
 {
     /**
      * Starts a new child event of the current event
@@ -15,7 +15,7 @@ public interface Event
      * @param name The name of the event
      * @return the event newly created
      */
-    public Event createChild(String name);
+    public LogEvent createChild(String name);
 
     /**
      * Starts a new "Throwable" child event of the current event
@@ -24,7 +24,7 @@ public interface Event
      * @param throwable the Throwable Exception or Error
      * @return the event newly created
      */
-    public Event createChild(String name, Throwable throwable);
+    public LogEvent createChild(String name, Throwable throwable);
 
     /**
      * Creates or updates a counter with the given name and adds it the specified value.
@@ -37,9 +37,9 @@ public interface Event
      *
      * @param name          The name of the counter.
      * @param value         The value to add to the counter.
-     * @return Event    The current counter.
+     * @return LogEvent    The current counter.
      */
-    public Event count(String name, long value);
+    public LogEvent count(String name, long value);
 
     /**
      * Sets an attribute of this event.
@@ -50,35 +50,35 @@ public interface Event
      *
      * @param name          The attribute name
      * @param value         The attribute value
-     * @return Event    this event
+     * @return LogEvent    this event
      */
-    public Event attr(String name, String value);
+    public LogEvent attr(String name, String value);
 
-    public Event publishTrace();
+    public LogEvent publishTrace();
 
-    public Event publishDebug();
+    public LogEvent publishDebug();
 
-    public Event publishInfo();
+    public LogEvent publishInfo();
 
-    public Event publishWarn();
+    public LogEvent publishWarn();
 
-    public Event publishError();
+    public LogEvent publishError();
 
     /**
      * Records the timestamp where this event occurred.
      *
      * No need to handle this manually, unless you don't want to broadcast the start event.
      *
-     * @return Event    this event
+     * @return LogEvent    this event
      */
-    public Event start();
+    public LogEvent start();
 
     /**
      * Records the timestamp where this event occurred AND returns the parent of this event.
      *
-     * @return Event the parent of this event
+     * @return LogEvent the parent of this event
      */
-    public Event stop();
+    public LogEvent stop();
 
     /**
      * Getter of attributes
@@ -92,7 +92,7 @@ public interface Event
      */
     public long durationInMS();
 
-    public Event parent();
+    public LogEvent parent();
 
     public String eventName();
 
@@ -105,8 +105,8 @@ public interface Event
      *
      * Ponctual: An action considered as having no temporal duration. http://www.thefreedictionary.com/punctual
      *
-     * @return Event
+     * @return LogEvent
      */
-    public Event ponctualEvent();
+    public LogEvent ponctualEvent();
     public boolean isPonctual();
 }
