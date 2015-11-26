@@ -28,7 +28,7 @@ public class EventJournal
     }
 
 
-    public LogEvent createRootEvent(String name)
+    public LogEvent newRootEvent(String name)
     {
         return new DefaultEvent( this, name, 0, null );
     }

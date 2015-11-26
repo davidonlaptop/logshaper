@@ -47,46 +47,53 @@ public class DefaultEvent implements LogEvent
         state           = EventState.NEW;
     }
 
-
     /**
-     * Starts a new child event of the current event
+     * For internal used only.
      *
-     * @param name The name of the event
-     * @return the event newly created
+     * @param journal
+     * @param name
+     * @param depth
+     * @param parent
+     * @param isPonctual
      */
+    protected DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent, boolean isPonctual)
+    {
+        this.journal    = journal;
+        this.eventName  = name;
+        this.depth      = depth;
+        this.parent     = parent;
+        this.attributes = new LinkedHashMap<>();
+
+        if (isPonctual) {
+            this.isPonctual = true;
+            this.state = EventState.ENDED;
+            this.eventStartedAtMS = System.currentTimeMillis();
+            this.eventEndedAtMS = this.eventStartedAtMS;
+        }
+    }
+
+
     @Override
-    public LogEvent createChild(String name)
+    public LogEvent newChildEvent(String name)
     {
         return new DefaultEvent( journal, name, depth + 1, this );
     }
 
 
-    /**
-     * Starts a new child event of the current event
-     *
-     * @param name The name of the event
-     * @return the event newly created
-     */
     @Override
-    public LogEvent createChild( String name, Throwable throwable )
+    public LogEvent newPonctualEvent(String name)
     {
-        return new ThrowableEvent( journal, name, depth + 1, this, throwable );
+        return new DefaultEvent( journal, name, depth + 1, this, true);
     }
 
 
-    /**
-     * Creates or updates a long counter with the given name and adds it the specified value.
-     *
-     * The Counter is automatically propagated recursively to all the parents.
-     *
-     * To decrement the counter, just send a negative value.
-     *
-     * Exemples: "DB.Duration", "Alfresco.Duration", "BIRT.Duration", "JSON.Parsing.Duration", "ComputingBudget.Duration"
-     *
-     * @param name         The name of the counter.
-     * @param value        The value to add to the counter.
-     * @return LogEvent    The current counter.
-     */
+    @Override
+    public LogEvent newThrowableEvent(Throwable throwable)
+    {
+        return new ThrowableEvent( journal, depth + 1, this, throwable );
+    }
+
+
     @Override
     public LogEvent count(String name, long value)
     {
@@ -104,19 +111,6 @@ public class DefaultEvent implements LogEvent
     }
 
 
-    /**
-     * Creates or updates a double counter with the given name and adds it the specified value.
-     *
-     * The Counter is automatically propagated recursively to all the parents.
-     *
-     * To decrement the counter, just send a negative value.
-     *
-     * Exemples: "DB.Duration", "Alfresco.Duration", "BIRT.Duration", "JSON.Parsing.Duration", "ComputingBudget.Duration"
-     *
-     * @param name         The name of the counter.
-     * @param value        The value to add to the counter.
-     * @return LogEvent    The current counter.
-     */
     @Override
     public LogEvent count(String name, double value)
     {
@@ -134,17 +128,6 @@ public class DefaultEvent implements LogEvent
     }
 
 
-    /**
-     * Sets an attribute of this event.
-     *
-     * The scope is always local to the event (e.g. is it NOT propagated to the parents like the counters are).
-     *
-     * Exemples: User, SessionId, IP, UserAction, URL, Method, UserAgent
-     *
-     * @param name          The attribute name
-     * @param value         The attribute value
-     * @return LogEvent    this event
-     */
     @Override
     public LogEvent attr(String name, String value)
     {
@@ -229,13 +212,6 @@ public class DefaultEvent implements LogEvent
     }
 
 
-    /**
-     * Records the timestamp where this event occurred.
-     *
-     * No need to handle this manually, unless you don't want to broadcast the start event.
-     *
-     * @return LogEvent    this event
-     */
     @Override
     public LogEvent start()
     {
@@ -245,11 +221,6 @@ public class DefaultEvent implements LogEvent
         return this;
     }
 
-    /**
-     * Records the timestamp where this event occurred AND returns the parent of this event.
-     *
-     * @return LogEvent the parent of this event
-     */
     @Override
     public LogEvent stop()
     {
@@ -269,20 +240,12 @@ public class DefaultEvent implements LogEvent
     }
 
 
-    /**
-     * Getter of attributes
-     *
-     * @return the list of attributes
-     */
     @Override
     public Map<String,Attribute> attributes()
     {
         return attributes;
     }
 
-    /**
-     * @return duration of the event in milliseconds, or 0 if non-started/non-stopped.
-     */
     @Override
     public long durationInMS()
     {
@@ -312,17 +275,6 @@ public class DefaultEvent implements LogEvent
     @Override
     public int depth() {
         return depth;
-    }
-
-    @Override
-    public LogEvent ponctualEvent()
-    {
-        this.isPonctual     = true;
-        this.state          = EventState.ENDED;
-        eventStartedAtMS    = System.currentTimeMillis();
-        eventEndedAtMS      = eventStartedAtMS;
-
-        return this;
     }
 
     @Override

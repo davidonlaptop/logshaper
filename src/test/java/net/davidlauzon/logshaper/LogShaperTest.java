@@ -32,19 +32,19 @@ public class LogShaperTest
     @Test public void testBroadcastLevel()
     {
         // ERROR > WARN > INFO > DEBUG > TRACE
-        LogShaper.createRootEvent("TestBroadcast").publishError();
+        LogShaper.newRootEvent("TestBroadcast").publishError();
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
-        LogShaper.createRootEvent("TestBroadcast").publishWarn();
+        LogShaper.newRootEvent("TestBroadcast").publishWarn();
         assertThat( subscriber.getLastMessage(), startsWith(" WARN") );
 
-        LogShaper.createRootEvent("TestBroadcast").publishInfo();
-        assertThat( subscriber.getLastMessage(), startsWith(" INFO") );
+        LogShaper.newRootEvent("TestBroadcast").publishInfo();
+        assertThat(subscriber.getLastMessage(), startsWith(" INFO"));
 
-        LogShaper.createRootEvent("TestBroadcast").publishDebug();
+        LogShaper.newRootEvent("TestBroadcast").publishDebug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
 
-        LogShaper.createRootEvent("TestBroadcast").publishTrace();
+        LogShaper.newRootEvent("TestBroadcast").publishTrace();
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
@@ -53,7 +53,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.createRootEvent("TestStopDuration").publishInfo();
+        event = LogShaper.newRootEvent("TestStopDuration").publishInfo();
         assertThat( subscriber.getLastMessage(), containsString("started") );
 
         event.stop().publishInfo();
@@ -65,7 +65,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.createRootEvent("TestEventAttribute")
+        event = LogShaper.newRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
                 .publishInfo();
         assertThat( subscriber.getLastMessage(), allOf(
@@ -102,24 +102,24 @@ public class LogShaperTest
         LogEvent jsonEncodeEvent;
 
         // Level: 0 (root)
-        requestEvent = LogShaper.createRootEvent("Request")
+        requestEvent = LogShaper.newRootEvent("Request")
                 .attr("HTTP.Verb", "PUT").attr("URL", "/people/1")
                 .publishInfo();
 
         // Level: 1
-        jsonDecodeEvent = requestEvent.createChild("JSON.Decode")
+        jsonDecodeEvent = requestEvent.newChildEvent("JSON.Decode")
                 .count("JSON.Decoded.Bytes", 4096)
                 .publishDebug();
         Thread.sleep(5);            // Expensive computation / external system
         jsonDecodeEvent.stop().publishDebug();
 
         // Level: 1
-        dbTransactionEvent = requestEvent.createChild("DB.Transaction")
+        dbTransactionEvent = requestEvent.newChildEvent("DB.Transaction")
                 .attr("Isolation.Level", "Read committed")
                 .publishInfo();
 
         // Level: 2
-        dbSelectEvent = dbTransactionEvent.createChild("DB.Read")
+        dbSelectEvent = dbTransactionEvent.newChildEvent("DB.Read")
                 .attr("QUERY", "SELECT FROM ...")
                 .publishInfo();
         Thread.sleep(12);            // Expensive computation / external system
@@ -128,7 +128,7 @@ public class LogShaperTest
                 .publishInfo();
 
         // Level: 2
-        dbUpdateEvent = dbTransactionEvent.createChild("DB.Write")
+        dbUpdateEvent = dbTransactionEvent.newChildEvent("DB.Write")
                 .attr("QUERY", "UPDATE ...")
                 .publishInfo();
         Thread.sleep(27);            // Expensive computation / external system
@@ -137,12 +137,12 @@ public class LogShaperTest
                 .publishInfo();
 
         // Level: 2
-        businessRuleEvent = dbTransactionEvent.createChild("BusinessRule")
+        businessRuleEvent = dbTransactionEvent.newChildEvent("BusinessRule")
                 .attr("Rule", "UpdateBudget")
                 .publishInfo();
 
         // Level: 3
-        dbUpdate2Event = businessRuleEvent.createChild("DB.Write")
+        dbUpdate2Event = businessRuleEvent.newChildEvent("DB.Write")
                 .attr("QUERY", "UPDATE ...")
                 .publishInfo();
         Thread.sleep(33);            // Expensive computation / external system
@@ -153,13 +153,13 @@ public class LogShaperTest
         dbTransactionEvent.stop().publishInfo();
 
         // Level: 1
-        thirdPartyAppEvent = requestEvent.createChild("ThirdPartyApp")
+        thirdPartyAppEvent = requestEvent.newChildEvent("ThirdPartyApp")
                 .publishTrace();
         Thread.sleep(9);            // Expensive computation / external system
         thirdPartyAppEvent.stop().publishTrace();
 
         // Level: 1
-        jsonEncodeEvent = requestEvent.createChild("JSON.Encode").publishDebug();
+        jsonEncodeEvent = requestEvent.newChildEvent("JSON.Encode").publishDebug();
         Thread.sleep(5);            // Expensive computation / external system
         jsonEncodeEvent.stop()
                 .count("JSON.Encoded.Bytes", 2134)
@@ -175,20 +175,14 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.createRootEvent("TestPonctualEvent")
-                .ponctualEvent()
-                .attr("KEY1", "val1").attr("KEY2", "val2")
+        event = LogShaper.newRootEvent("TestPonctualEventParent")
+                .attr("KEY1", "val1")
+                .attr("KEY2", "val2")
                 .publishInfo();
-        assertThat( subscriber.getLastMessage(), allOf(
-                containsString("KEY1=\"val1\""),
-                containsString("KEY2=\"val2\""),
-                containsString("occured")
-        ));
 
-
-        event = LogShaper.createRootEvent("TestPonctualEventParent").attr("KEY1", "val1").publishInfo();
-        event.createChild("TestPonctualEventChild").ponctualEvent().publishInfo();
+        event.newPonctualEvent("TestPonctualEventChild").publishInfo();
         assertThat(subscriber.getLastMessage(), containsString("occured") );
+
         event.stop().publishInfo();
     }
 
@@ -197,11 +191,12 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.createRootEvent("TestThrowableEvent")
-                .attr("KEY1", "val1").attr("KEY2", "val2")
+        event = LogShaper.newRootEvent("TestThrowableEvent")
+                .attr("KEY1", "val1")
+                .attr("KEY2", "val2")
                 .publishInfo();
 
-        event.createChild("TestThrowableEventException", new Throwable("Something got wrong")).publishInfo();
+        event.newThrowableEvent(new Throwable("Something got wrong")).publishInfo();
 
         event.stop().publishInfo();
     }

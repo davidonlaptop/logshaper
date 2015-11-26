@@ -16,12 +16,13 @@ public class LogShaper
 
 
     /**
-     * Create a new root event in the default registry
+     * Creates a new root event in the default journal
+     *
      * @param name The name of the event
      * @return the event
      */
-    static public LogEvent createRootEvent( String name )
+    static public LogEvent newRootEvent(String name)
     {
-        return getDefaultJournal().createRootEvent( name );
+        return getDefaultJournal().newRootEvent(name);
     }
 }

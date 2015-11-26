@@ -10,21 +10,30 @@ import java.util.Map;
 public interface LogEvent
 {
     /**
-     * Starts a new child event of the current event
+     * Creates a new event as a child of the current event
      *
      * @param name The name of the event
      * @return the event newly created
      */
-    public LogEvent createChild(String name);
+    public LogEvent newChildEvent(String name);
 
     /**
-     * Starts a new "Throwable" child event of the current event
+     * Creates a new ponctual event as a child of the current event.
      *
-     * @param name The name of the event
+     * Ponctual: An action considered as having no temporal duration. http://www.thefreedictionary.com/punctual
+     *
+     * @param name  The name of the event
+     * @return  the event newly created
+     */
+    public LogEvent newPonctualEvent(String name);
+
+    /**
+     * Creates a new "Throwable" event as a child of the current event.
+     *
      * @param throwable the Throwable Exception or Error
      * @return the event newly created
      */
-    public LogEvent createChild(String name, Throwable throwable);
+    public LogEvent newThrowableEvent(Throwable throwable);
 
     /**
      * Creates or updates a long counter with the given name and adds it the specified value.
@@ -121,13 +130,5 @@ public interface LogEvent
 
     public int depth();
 
-    /**
-     * Indicates that this event is a ponctualEvent event.
-     *
-     * Ponctual: An action considered as having no temporal duration. http://www.thefreedictionary.com/punctual
-     *
-     * @return LogEvent
-     */
-    public LogEvent ponctualEvent();
     public boolean isPonctual();
 }

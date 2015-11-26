@@ -7,6 +7,8 @@ import net.davidlauzon.logshaper.EventJournal;
  */
 public class ThrowableEvent extends DefaultEvent
 {
+    static private final String DEFAULT_EVENT_NAME = "Exception";
+
     private Throwable throwable;
 
 
@@ -14,17 +16,16 @@ public class ThrowableEvent extends DefaultEvent
      * (Constructor reserved for internal use). See @EventJournal for how to initialize the root event
      *
      * @param journal   The journal where this event will be logged to
-     * @param parent    The parent event that triggered this new event.
      * @param depth     The level of depth from the root event (0 if no parent)
-     * @param name      The name of the LogEvent
+     * @param parent    The parent event that triggered this new event.
      * @param throwable The throwable exception or error to be thrown
      */
-    public ThrowableEvent(EventJournal journal, String name, int depth, LogEvent parent, Throwable throwable)
+    public ThrowableEvent( EventJournal journal, int depth, LogEvent parent, Throwable throwable )
     {
-        super( journal, name, depth, parent );
+        // Create a new ponctual event
+        super( journal, DEFAULT_EVENT_NAME, depth, parent, true );
 
         this.throwable = throwable;
-        this.ponctualEvent();
     }
 
 
