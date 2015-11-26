@@ -51,7 +51,7 @@ Here's a sneak peak of what LogShaper's output looks like:
 	DEBUG  JSON.Encode ended in 0.007s. [JSON.Encoded.Bytes=2134, Provenance="CIB-JQ.Bj4x7g"]
 	 INFO Request ended in 0.108s. [HTTP.Verb="PUT", URL="/people/1", JSON.Decoded.Bytes=4096, JSON.Decode.MS=6, DB.Read.MS=14, DB.Read.NbRows=3, DB.Write.MS=67, DB.Write.NbRows=6, BusinessRule.MS=38, DB.Transaction.MS=83, ThirdPartyApp.MS=9, JSON.Encode.MS=7, JSON.Encoded.Bytes=2134, HTTP.Status="200", Provenance="CIB-JQ"]
 
-Note: the code that generated the results above can be found in the `LogShaperTest::testEventHierarchy()` method.
+Note: the code that generated the results above can be found in the [`LogShaperTest::testEventHierarchy()` method](src/test/java/net/davidlauzon/logshaper/LogShaperTest.java).
 
 
 ## Basic concepts
@@ -64,7 +64,7 @@ Note: the code that generated the results above can be found in the `LogShaperTe
 - The **attributes are displayed in the same order which they were called**;
 - Each event, belongs to a **parent event**, except the **root events** which have no parents.
 - The traceability of the events is computed automatically (_see the `Provenance` attribute above_);
-- A **counter* is a special type of attribute which is cumulative, which means that its value is propagated and aggregated up in its parent's hierarchy (_see the **DB.Write.NbRows** attribute above);
+- A **counter* is a special type of attribute which is cumulative, which means that its value is propagated and aggregated up in its parent's hierarchy (_see the **DB.Write.NbRows** attribute above_);
 - The **duration counters** are computed automatically;
 - A **ponctual event** cannot be started, nor stopped since it has a duration of 0 seconds. (e.g. an `Exception`); 
 
