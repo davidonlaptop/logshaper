@@ -27,7 +27,7 @@ public interface LogEvent
     public LogEvent createChild(String name, Throwable throwable);
 
     /**
-     * Creates or updates a counter with the given name and adds it the specified value.
+     * Creates or updates a long counter with the given name and adds it the specified value.
      *
      * The Counter is automatically propagated recursively to all the parents.
      *
@@ -35,11 +35,26 @@ public interface LogEvent
      *
      * Exemples: "Duration.DB", "Duration.Alfresco", "Duration.Birt", "Duration.JsonParsing", "ComputingBudget"
      *
-     * @param name          The name of the counter.
-     * @param value         The value to add to the counter.
+     * @param name         The name of the counter.
+     * @param value        The value to add to the counter.
      * @return LogEvent    The current counter.
      */
     public LogEvent count(String name, long value);
+
+    /**
+     * Creates or updates a double counter with the given name and adds it the specified value.
+     *
+     * The Counter is automatically propagated recursively to all the parents.
+     *
+     * To decrement the counter, just send a negative value.
+     *
+     * Exemples: "Duration.DB", "Duration.Alfresco", "Duration.JsonParsing", "ComputingBudget"
+     *
+     * @param name         The name of the counter.
+     * @param value        The value to add to the counter.
+     * @return LogEvent    The current counter.
+     */
+    public LogEvent count(String name, double value);
 
     /**
      * Sets an attribute of this event.
@@ -53,6 +68,10 @@ public interface LogEvent
      * @return LogEvent    this event
      */
     public LogEvent attr(String name, String value);
+
+    public LogEvent attr(String name, long value);
+
+    public LogEvent attr(String name, double value);
 
     public LogEvent publishTrace();
 

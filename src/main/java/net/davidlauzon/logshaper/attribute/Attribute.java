@@ -11,4 +11,7 @@ public interface Attribute
      * @return True if this attribue's value should be enclosed in quotes
      */
     public boolean isQuoteable();
+
+    public Attribute add( long increment );
+    public Attribute add( double increment );
 }

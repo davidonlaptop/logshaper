@@ -2,9 +2,7 @@ package net.davidlauzon.logshaper.event;
 
 
 import net.davidlauzon.logshaper.EventJournal;
-import net.davidlauzon.logshaper.attribute.Attribute;
-import net.davidlauzon.logshaper.attribute.CounterAttribute;
-import net.davidlauzon.logshaper.attribute.TextAttribute;
+import net.davidlauzon.logshaper.attribute.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -77,7 +75,7 @@ public class DefaultEvent implements LogEvent
 
 
     /**
-     * Creates or updates a counter with the given name and adds it the specified value.
+     * Creates or updates a long counter with the given name and adds it the specified value.
      *
      * The Counter is automatically propagated recursively to all the parents.
      *
@@ -85,18 +83,48 @@ public class DefaultEvent implements LogEvent
      *
      * Exemples: "DB.Duration", "Alfresco.Duration", "BIRT.Duration", "JSON.Parsing.Duration", "ComputingBudget.Duration"
      *
-     * @param name          The name of the counter.
-     * @param value         The value to add to the counter.
+     * @param name         The name of the counter.
+     * @param value        The value to add to the counter.
      * @return LogEvent    The current counter.
      */
     @Override
     public LogEvent count(String name, long value)
     {
-        CounterAttribute attr = ((CounterAttribute) attributes.get(name));
+        Attribute attr = attributes.get(name);
         if (attr == null)
-            attributes.put( name, new CounterAttribute(value) );
+            attributes.put( name, new LongAttribute(value) );
         else
-            attr.increment(value);
+            attr.add( value );
+
+        // propagate the counter to the parents recursively
+        if (parent != null)
+            parent.count(name, value);
+
+        return this;
+    }
+
+
+    /**
+     * Creates or updates a double counter with the given name and adds it the specified value.
+     *
+     * The Counter is automatically propagated recursively to all the parents.
+     *
+     * To decrement the counter, just send a negative value.
+     *
+     * Exemples: "DB.Duration", "Alfresco.Duration", "BIRT.Duration", "JSON.Parsing.Duration", "ComputingBudget.Duration"
+     *
+     * @param name         The name of the counter.
+     * @param value        The value to add to the counter.
+     * @return LogEvent    The current counter.
+     */
+    @Override
+    public LogEvent count(String name, double value)
+    {
+        Attribute attr = attributes.get(name);
+        if (attr == null)
+            attributes.put( name, new DoubleAttribute(value) );
+        else
+            attr.add( value );
 
         // propagate the counter to the parents recursively
         if (parent != null)
@@ -120,7 +148,23 @@ public class DefaultEvent implements LogEvent
     @Override
     public LogEvent attr(String name, String value)
     {
-        this.attributes.put( name, new TextAttribute(value) );
+        this.attributes.put( name, new StringAttribute( value ) );
+
+        return this;
+    }
+
+    @Override
+    public LogEvent attr(String name, long value)
+    {
+        this.attributes.put( name, new LongAttribute( value ) );
+
+        return this;
+    }
+
+    @Override
+    public LogEvent attr(String name, double value)
+    {
+        this.attributes.put( name, new DoubleAttribute( value ) );
 
         return this;
     }
