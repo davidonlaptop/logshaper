@@ -41,7 +41,7 @@ public class SubstriberMock extends AbstractSubscriber implements Subscriber
     @Override
     public void onInfo(Event event)
     {
-        publish( "INFO " + formatEvent(event));
+        publish( " INFO " + formatEvent(event));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SubstriberMock extends AbstractSubscriber implements Subscriber
     @Override
     public void onWarn(Event event)
     {
-        publish( "WARN " + formatEvent(event));
+        publish( " WARN " + formatEvent(event));
     }
 
     @Override

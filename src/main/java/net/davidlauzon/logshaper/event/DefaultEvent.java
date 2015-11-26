@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by david on 15-11-04.
  *
- * Log levels hierarchy: FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+ * Log levels hierarchy: ERROR, WARN, INFO, DEBUG, TRACE
  */
 public class DefaultEvent implements Event
 {

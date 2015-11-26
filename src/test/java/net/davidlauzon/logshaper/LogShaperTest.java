@@ -36,10 +36,10 @@ public class LogShaperTest
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
         LogShaper.createRootEvent("TestBroadcast").publishWarn();
-        assertThat( subscriber.getLastMessage(), startsWith("WARN") );
+        assertThat( subscriber.getLastMessage(), startsWith(" WARN") );
 
         LogShaper.createRootEvent("TestBroadcast").publishInfo();
-        assertThat( subscriber.getLastMessage(), startsWith("INFO") );
+        assertThat( subscriber.getLastMessage(), startsWith(" INFO") );
 
         LogShaper.createRootEvent("TestBroadcast").publishDebug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
@@ -84,33 +84,90 @@ public class LogShaperTest
     }
 
 
-    @Test public void testEventHierarchy() throws InterruptedException {
-        Event eventParent;
-        Event eventChild1;
-        Event eventChild2;
-        Event eventChild2Child1;
-        Event eventChild2Child2;
-        Event eventChild2Child3;
+    /**
+     * An example of the output you may want in your application.
+     *
+     * @throws InterruptedException
+     */
+    @Test public void testEventHierarchy() throws InterruptedException
+    {
+        Event requestEvent;
+        Event jsonDecodeEvent;
+        Event dbTransactionEvent;
+        Event dbSelectEvent;
+        Event dbUpdateEvent;
+        Event businessRuleEvent;
+        Event dbUpdate2Event;
+        Event thirdPartyAppEvent;
+        Event jsonEncodeEvent;
 
-        eventParent = LogShaper.createRootEvent("Request").attr("ACTION", "Person.Update").publishInfo();
+        // Level: 0 (root)
+        requestEvent = LogShaper.createRootEvent("Request")
+                .attr("HTTP.Verb", "PUT").attr("URL", "/people/1")
+                .publishInfo();
 
-        eventChild1 = eventParent.createChild("JSON Parsing").count("JSON.BYTES", 4000).publishInfo();
-        Thread.sleep(1);            // Expensive computation / external system
-        eventChild1.stop().publishInfo();
+        // Level: 1
+        jsonDecodeEvent = requestEvent.createChild("JSON.Decode")
+                .count("JSON.Decoded.Bytes", 4096)
+                .publishDebug();
+        Thread.sleep(5);            // Expensive computation / external system
+        jsonDecodeEvent.stop().publishDebug();
 
-        eventChild2       = eventParent.createChild("Resource processing").publishInfo();
-        eventChild2Child1 = eventChild2.createChild("SQL").attr("QUERY", "SELECT FROM ...").publishInfo();
-        Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child1.stop().publishInfo();
-        eventChild2Child2 = eventChild2.createChild("BIRT").publishInfo();
-        Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child2.stop().publishInfo();
-        eventChild2.stop().publishInfo();
-        eventChild2Child3 = eventChild2.createChild("SQL").attr("QUERY", "UPDATE ...").publishInfo();
-        Thread.sleep(1);            // Expensive computation / external system
-        eventChild2Child3.stop().publishInfo();
+        // Level: 1
+        dbTransactionEvent = requestEvent.createChild("DB.Transaction")
+                .attr("Isolation.Level", "Read committed")
+                .publishInfo();
 
-        eventParent.stop().publishInfo();
+        // Level: 2
+        dbSelectEvent = dbTransactionEvent.createChild("DB.Read")
+                .attr("QUERY", "SELECT FROM ...")
+                .publishInfo();
+        Thread.sleep(12);            // Expensive computation / external system
+        dbSelectEvent.stop()
+                .count("DB.Read.NbRows", 3)
+                .publishInfo();
+
+        // Level: 2
+        dbUpdateEvent = dbTransactionEvent.createChild("DB.Write")
+                .attr("QUERY", "UPDATE ...")
+                .publishInfo();
+        Thread.sleep(27);            // Expensive computation / external system
+        dbUpdateEvent.stop()
+                .count("DB.Write.NbRows", 2)
+                .publishInfo();
+
+        // Level: 2
+        businessRuleEvent = dbTransactionEvent.createChild("BusinessRule")
+                .attr("Rule", "UpdateBudget")
+                .publishInfo();
+
+        // Level: 3
+        dbUpdate2Event = businessRuleEvent.createChild("DB.Write")
+                .attr("QUERY", "UPDATE ...")
+                .publishInfo();
+        Thread.sleep(33);            // Expensive computation / external system
+        dbUpdate2Event.stop()
+                .count("DB.Write.NbRows", 4)
+                .publishInfo();
+        businessRuleEvent.stop().publishInfo();
+        dbTransactionEvent.stop().publishInfo();
+
+        // Level: 1
+        thirdPartyAppEvent = requestEvent.createChild("ThirdPartyApp")
+                .publishTrace();
+        Thread.sleep(9);            // Expensive computation / external system
+        thirdPartyAppEvent.stop().publishTrace();
+
+        // Level: 1
+        jsonEncodeEvent = requestEvent.createChild("JSON.Encode").publishDebug();
+        Thread.sleep(5);            // Expensive computation / external system
+        jsonEncodeEvent.stop()
+                .count("JSON.Encoded.Bytes", 2134)
+                .publishDebug();
+
+        requestEvent.stop()
+                .attr("HTTP.Status", "200")
+                .publishInfo();
     }
 
 
