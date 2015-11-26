@@ -154,6 +154,14 @@ public class DefaultEvent implements LogEvent
     }
 
     @Override
+    public LogEvent attr(String name, boolean value)
+    {
+        this.attributes.put( name, new BooleanAttribute( value ) );
+
+        return this;
+    }
+
+    @Override
     public LogEvent attr(String name, long value)
     {
         this.attributes.put( name, new LongAttribute( value ) );

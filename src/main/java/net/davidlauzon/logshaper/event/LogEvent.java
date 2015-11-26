@@ -69,6 +69,8 @@ public interface LogEvent
      */
     public LogEvent attr(String name, String value);
 
+    public LogEvent attr(String name, boolean value);
+
     public LogEvent attr(String name, long value);
 
     public LogEvent attr(String name, double value);
