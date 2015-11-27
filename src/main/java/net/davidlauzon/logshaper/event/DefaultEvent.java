@@ -1,7 +1,7 @@
 package net.davidlauzon.logshaper.event;
 
 
-import net.davidlauzon.logshaper.EventJournal;
+import net.davidlauzon.logshaper.journal.EventJournal;
 import net.davidlauzon.logshaper.attribute.*;
 
 import java.util.LinkedHashMap;
@@ -31,63 +31,44 @@ public class DefaultEvent implements LogEvent
 
 
     /**
-     * (Constructor reserved for internal use). See @EventJournal for how to initialize the root event
+     * Constructor reserved for internal use. Instead use EventJournal's factory methods to create an event.
      *
-     * @param journal   The journal where this event will be logged to
-     * @param parent    The parent event that triggered this new event.
-     * @param depth     The level of depth from the root event (0 if no parent)
-     * @param name      The name of the Event
+     * @see EventJournal
+     * @param journal     The journal where this event will be logged to.
+     * @param name        The name of the Event.
+     * @param parent      The parent event that triggered this new event.
+     * @param isRelative  Tells if the ancestors are tracked relatively in the EventJournal.
      */
-    public DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent)
+    public DefaultEvent(EventJournal journal, String name, LogEvent parent, boolean isRelative)
     {
         this.journal    = journal;
         this.eventName  = name;
-        this.depth      = depth;
         this.parent     = parent;
-        this.attributes = new LinkedHashMap<>();
-        state           = EventState.NEW;
-    }
-
-    /**
-     * (Constructor reserved for internal use).
-     *
-     * See @EventJournal for how to initialize the root event.
-     *
-     * @param journal       The journal where this event will be logged to
-     * @param parent        The parent event that triggered this new event.
-     * @param depth         The level of depth from the root event (0 if no parent)
-     * @param name          The name of the Event
-     * @param isRelative    If this event ancestors are tracked relatively (see @EventJournal).
-     */
-    public  DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent, boolean isRelative)
-    {
-        this.journal    = journal;
-        this.eventName  = name;
-        this.depth      = depth;
-        this.parent     = parent;
+        this.depth      = (parent != null)  ?  parent.depth()+1  :  0;
         this.attributes = new LinkedHashMap<>();
         this.isRelative = isRelative;
+        this.state      = EventState.NEW;
     }
 
 
     @Override
     public LogEvent newChildEvent(String name)
     {
-        return new DefaultEvent( journal, name, depth + 1, this, this.isRelative() );
+        return new DefaultEvent( journal, name, this, this.isRelative() );
     }
 
 
     @Override
     public LogEvent newPonctualEvent(String name)
     {
-        return new PonctualEvent( journal, name, depth + 1, this, this.isRelative() );
+        return new PonctualEvent( journal, name, this, this.isRelative() );
     }
 
 
     @Override
     public LogEvent newThrowableEvent(Throwable throwable)
     {
-        return new ThrowableEvent( journal, depth + 1, this, throwable, this.isRelative() );
+        return new ThrowableEvent( journal, throwable, this, this.isRelative() );
     }
 
 
@@ -215,8 +196,7 @@ public class DefaultEvent implements LogEvent
         state               = EventState.STARTED;
         eventStartedAtMS    = System.currentTimeMillis();
 
-        if (isRelative() && !isPonctual())
-            journal().stackPushEvent(this);
+        journal().onEventStarted(this);
 
         return this;
     }
@@ -231,8 +211,7 @@ public class DefaultEvent implements LogEvent
         if (parent != null)
             parent.count(getDurationCounterName(), durationInMS());
 
-        if (isRelative() && !isPonctual())
-            journal().stackRemoveEvent(this);
+        journal().onEventStopped(this);
 
         return this;
     }

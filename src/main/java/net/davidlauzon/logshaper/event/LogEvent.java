@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public interface LogEvent
 {
+    public static final String UNSUPPORTED_LOGSHAPER_OPERATION_EVENT = "UnsupportedLogShaperOperation";
+
     /**
      * Creates a new event as a child of the current event
      *

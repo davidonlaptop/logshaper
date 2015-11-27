@@ -1,6 +1,6 @@
 package net.davidlauzon.logshaper.event;
 
-import net.davidlauzon.logshaper.EventJournal;
+import net.davidlauzon.logshaper.journal.EventJournal;
 import net.davidlauzon.logshaper.attribute.Attribute;
 import net.davidlauzon.logshaper.attribute.LongAttribute;
 
@@ -11,25 +11,36 @@ import net.davidlauzon.logshaper.attribute.LongAttribute;
  */
 public class ClearStackEvent extends PonctualEvent
 {
-    static protected final String CLEAR_STACK_NB_EVENTS = "NbEventsCleared";
+    static public final String DEFAULT_NAME   = "ClearStack";
+    static public final String NB_EVENTS_ATTR = "NbEventsCleared";
+    static public final String AUTOMATIC_ATTR = "Automatic";
 
 
-    public ClearStackEvent(EventJournal journal, String name, int depth, LogEvent parent, boolean isRelative)
+    public ClearStackEvent(EventJournal journal, String name, LogEvent parent, boolean isRelative)
     {
-        super(journal, name, depth, parent, isRelative);
+        super(journal, name, parent, isRelative);
     }
 
 
-    public ClearStackEvent nbEventsCleared( long nbEventsCleared )
+    /**
+     * Sets the number of cleared events
+     *
+     * @param nbEventsCleared
+     * @return this event
+     */
+    public ClearStackEvent setNbEventsCleared(long nbEventsCleared)
     {
-        count(CLEAR_STACK_NB_EVENTS, nbEventsCleared);
+        count(NB_EVENTS_ATTR, nbEventsCleared);
 
         return this;
     }
 
+    /**
+     * Returns the number of cleared events
+     */
     public long nbEventsCleared()
     {
-        Attribute attr = attributes().get(CLEAR_STACK_NB_EVENTS);
+        Attribute attr = attributes().get(NB_EVENTS_ATTR);
         if (attr != null) {
             return ((LongAttribute) attr).value();
         } else {

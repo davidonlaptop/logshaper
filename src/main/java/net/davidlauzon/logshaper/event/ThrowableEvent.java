@@ -1,6 +1,6 @@
 package net.davidlauzon.logshaper.event;
 
-import net.davidlauzon.logshaper.EventJournal;
+import net.davidlauzon.logshaper.journal.EventJournal;
 
 /**
  * Created by david on 15-11-22.
@@ -13,20 +13,17 @@ public class ThrowableEvent extends PonctualEvent
 
 
     /**
-     * (Constructor reserved for internal use).
-     *
-     * See @EventJournal for how to initialize the root event
+     * Constructor reserved for internal use.
      *
      * @param journal    The journal where this event will be logged to
-     * @param depth      The level of depth from the root event (0 if no parent)
-     * @param parent     The parent event that triggered this new event.
      * @param throwable  The throwable exception or error to be thrown
-     * @param isRelative If this event ancestors are tracked relatively (see @EventJournal).
+     * @param parent     The parent event that triggered this new event
+     * @param isRelative If this event ancestors are tracked relatively (see @EventJournal)
      */
-    public ThrowableEvent( EventJournal journal, int depth, LogEvent parent, Throwable throwable, boolean isRelative )
+    public ThrowableEvent( EventJournal journal, Throwable throwable, LogEvent parent, boolean isRelative )
     {
         // Create a new ponctual event
-        super( journal, DEFAULT_EVENT_NAME, depth, parent, isRelative );
+        super( journal, DEFAULT_EVENT_NAME, parent, isRelative );
 
         this.throwable = throwable;
     }
