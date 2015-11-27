@@ -9,7 +9,7 @@ import net.davidlauzon.logshaper.journal.SimpleJournal;
  */
 public class LogShaper
 {
-    static private final EventJournal defaultJournal = new SimpleJournal();
+    static private EventJournal defaultJournal = new SimpleJournal();
 
 
     static public final EventJournal defaultJournal() {
@@ -17,14 +17,8 @@ public class LogShaper
     }
 
 
-    /**
-     * Creates a new root event in the default journal
-     *
-     * @param name The name of the event
-     * @return the event
-     */
-    static public LogEvent newRootEvent(String name)
+    static public final void setDefaultJournal( EventJournal journal )
     {
-        return defaultJournal().newRootEvent(name);
+        defaultJournal = journal;
     }
 }

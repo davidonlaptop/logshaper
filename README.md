@@ -83,13 +83,17 @@ Note: the code that generated the results above can be found in the [`LogShaperT
 
 First, configure the default journal when your application starts
 
-	final Logger logger = LoggerFactory.getLogger("logshaper");
-	LogShaper.getDefaultJournal().subscribe( new SLF4JSubscriber(logger) );
+	Logger       logger  = LoggerFactory.getLogger("logshaper");
+	EventJournal journal = new SimpleJournal();
+	
+	journal.subscribe( new SLF4JSubscriber(logger) );
+	
+	LogShaper.setDefaultJournal( journal );
 
 Then, in your controller:
 
 	public String get() {
-		LogEvent requestEvent = LogShaper.newRootEvent("Request")
+		LogEvent requestEvent = LogShaper.defaultJournal().newRootEvent("Request")
 		    .attr("HTTP.Verb", "PUT")
 		    .attr("URL", "/people/1")
 		    .publishInfo();
@@ -108,3 +112,15 @@ Then, in your controller:
 	}
 
 Note that you could choose to publish the start and stop state at different log level, or only publish one of them.
+
+
+## Going further
+As you may have noticed, the SimpleJournal API above requires the event to be carried as a Data Transfer Object (DTO) through all the layers of your architecture.
+
+Alternatively, you look into the [`ThreadRelativeJournal` implementation](src/main/java/net/davidlauzon/logshaper/journal/ThreadRelativeJournal.java).
+This journal will keep track of the current event for you, without the need of using a DTO anywhere in your code.
+For exemple:
+
+	LogShaper.setDefaultJournal( new ThreadRelativeJournal() );
+	
+	LogShaper.defaultJournal().newChildEvent("My child event");

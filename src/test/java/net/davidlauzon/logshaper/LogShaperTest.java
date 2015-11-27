@@ -1,6 +1,7 @@
 package net.davidlauzon.logshaper;
 
 import net.davidlauzon.logshaper.event.LogEvent;
+import net.davidlauzon.logshaper.journal.SimpleJournal;
 import org.junit.*;
 
 import static com.jcabi.matchers.RegexMatchers.*;
@@ -14,12 +15,16 @@ import static org.junit.Assert.*;
 public class LogShaperTest
 {
     static private SubscriberMock subscriber;
+    static private SimpleJournal journal;
 
 
     @BeforeClass static public void setUp() throws Exception
     {
         subscriber  = new SubscriberMock();
-        LogShaper.defaultJournal().subscribe( subscriber  );
+        journal     = new SimpleJournal();
+        journal.subscribe( subscriber  );
+
+        LogShaper.setDefaultJournal( journal );
     }
 
 
@@ -32,19 +37,19 @@ public class LogShaperTest
     @Test public void testBroadcastLevel()
     {
         // ERROR > WARN > INFO > DEBUG > TRACE
-        LogShaper.newRootEvent("TestBroadcast").publishError();
+        LogShaper.defaultJournal().newRootEvent("TestBroadcast").publishError();
         assertThat(subscriber.getLastMessage(), startsWith("ERROR"));
 
-        LogShaper.newRootEvent("TestBroadcast").publishWarn();
+        LogShaper.defaultJournal().newRootEvent("TestBroadcast").publishWarn();
         assertThat( subscriber.getLastMessage(), startsWith(" WARN") );
 
-        LogShaper.newRootEvent("TestBroadcast").publishInfo();
+        LogShaper.defaultJournal().newRootEvent("TestBroadcast").publishInfo();
         assertThat(subscriber.getLastMessage(), startsWith(" INFO"));
 
-        LogShaper.newRootEvent("TestBroadcast").publishDebug();
+        LogShaper.defaultJournal().newRootEvent("TestBroadcast").publishDebug();
         assertThat( subscriber.getLastMessage(), startsWith("DEBUG") );
 
-        LogShaper.newRootEvent("TestBroadcast").publishTrace();
+        LogShaper.defaultJournal().newRootEvent("TestBroadcast").publishTrace();
         assertThat( subscriber.getLastMessage(), startsWith("TRACE") );
     }
 
@@ -53,7 +58,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.newRootEvent("TestStopDuration").publishInfo();
+        event = LogShaper.defaultJournal().newRootEvent("TestStopDuration").publishInfo();
         assertThat( subscriber.getLastMessage(), containsString("started") );
 
         event.stop().publishInfo();
@@ -65,7 +70,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.newRootEvent("TestEventAttribute")
+        event = LogShaper.defaultJournal().newRootEvent("TestEventAttribute")
                 .attr("KEY1", "val1").attr("KEY2", "val2")
                 .publishInfo();
         assertThat( subscriber.getLastMessage(), allOf(
@@ -102,7 +107,7 @@ public class LogShaperTest
         LogEvent jsonEncodeEvent;
 
         // Level: 0 (root)
-        requestEvent = LogShaper.newRootEvent("Request")
+        requestEvent = LogShaper.defaultJournal().newRootEvent("Request")
                 .attr("HTTP.Verb", "PUT").attr("URL", "/people/1")
                 .publishInfo();
 
@@ -175,7 +180,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.newRootEvent("TestPonctualEventParent")
+        event = LogShaper.defaultJournal().newRootEvent("TestPonctualEventParent")
                 .attr("KEY1", "val1")
                 .attr("KEY2", "val2")
                 .publishInfo();
@@ -191,7 +196,7 @@ public class LogShaperTest
     {
         LogEvent event;
 
-        event = LogShaper.newRootEvent("TestThrowableEvent")
+        event = LogShaper.defaultJournal().newRootEvent("TestThrowableEvent")
                 .attr("KEY1", "val1")
                 .attr("KEY2", "val2")
                 .publishInfo();
