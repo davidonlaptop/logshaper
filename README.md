@@ -1,5 +1,5 @@
 # LogShaper
-Lightweight library (.jar < 20KB) allowing to log events and metrics in a structured and generic way to facilitate their automated analysis.
+Lightweight library (.jar < 25KB) allowing to log events and metrics in a structured and generic way to facilitate their automated analysis.
 
 ## Why LogShaper ?
 Every respectable application log the progress of its internal state to a journal, typically one phrase per event in a flat file.

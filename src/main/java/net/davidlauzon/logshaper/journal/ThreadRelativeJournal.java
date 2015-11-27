@@ -112,7 +112,7 @@ public class ThreadRelativeJournal extends SimpleJournal
     {
         Deque<LogEvent> stack = getOrCreateRelativeStack();
 
-        return stack.getLast();
+        return stack.peekLast();
     }
 
     protected void stackPushEvent( LogEvent event )

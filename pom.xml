@@ -5,7 +5,7 @@
     <groupId>net.davidlauzon</groupId>
     <artifactId>logshaper</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.1</version>
+    <version>0.5.0</version>
 
     <name>slimevents</name>
     <url>https://github.com/davidonlaptop/logshaper</url>
