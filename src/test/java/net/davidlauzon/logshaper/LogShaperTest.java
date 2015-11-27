@@ -19,7 +19,7 @@ public class LogShaperTest
     @BeforeClass static public void setUp() throws Exception
     {
         subscriber  = new SubscriberMock();
-        LogShaper.getDefaultJournal().subscribe( subscriber  );
+        LogShaper.defaultJournal().subscribe( subscriber  );
     }
 
 

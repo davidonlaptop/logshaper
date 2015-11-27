@@ -89,12 +89,12 @@ First, configure the default journal when your application starts
 Then, in your controller:
 
 	public String get() {
-		LogEvent requestEvent = LogShaper.createRootEvent("Request")
+		LogEvent requestEvent = LogShaper.newRootEvent("Request")
 		    .attr("HTTP.Verb", "PUT")
 		    .attr("URL", "/people/1")
 		    .publishInfo();
 	
-		LogEvent jsonDecodeEvent = requestEvent.createChild("JSON.Decode")
+		LogEvent jsonDecodeEvent = requestEvent.newChildEvent("JSON.Decode")
 	        .count("JSON.Decoded.Bytes", 4096)
 	        .publishDebug();
         // Expensive computation / external system

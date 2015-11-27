@@ -10,7 +10,7 @@ public class LogShaper
     static private final EventJournal defaultJournal = new EventJournal();
 
 
-    static public final EventJournal getDefaultJournal() {
+    static public final EventJournal defaultJournal() {
         return defaultJournal;
     }
 
@@ -23,6 +23,6 @@ public class LogShaper
      */
     static public LogEvent newRootEvent(String name)
     {
-        return getDefaultJournal().newRootEvent(name);
+        return defaultJournal().newRootEvent(name);
     }
 }

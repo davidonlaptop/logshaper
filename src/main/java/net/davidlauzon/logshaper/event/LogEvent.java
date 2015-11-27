@@ -104,11 +104,22 @@ public interface LogEvent
     public LogEvent start();
 
     /**
+     * Stops the current event.
+     *
      * Records the timestamp where this event occurred AND returns the parent of this event.
      *
      * @return LogEvent the parent of this event
      */
     public LogEvent stop();
+
+    /**
+     * Stops the current event and its parents recursively.
+     *
+     * Records the timestamp where this event occurred AND returns the parent of this event.
+     *
+     * @return LogEvent the parent of this event
+     */
+    public LogEvent stopAll();
 
     /**
      * Getter of attributes
@@ -131,4 +142,6 @@ public interface LogEvent
     public int depth();
 
     public boolean isPonctual();
+
+    public boolean isRelative();
 }

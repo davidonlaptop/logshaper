@@ -15,18 +15,19 @@ import java.util.Map;
  */
 public class DefaultEvent implements LogEvent
 {
-    private EventJournal journal;
-    private LogEvent parent;
+    protected EventJournal journal;
+    protected LogEvent parent;
 
-    private String eventName;
-    private int depth;
+    protected String eventName;
+    protected int depth;
 
-    private boolean isPonctual;
-    private long eventStartedAtMS;
-    private long eventEndedAtMS;
-    private EventState state;
+    protected boolean isPonctual;
+    protected boolean isRelative;
+    protected long eventStartedAtMS;
+    protected long eventEndedAtMS;
+    protected EventState state;
 
-    private Map<String,Attribute> attributes;
+    protected Map<String,Attribute> attributes;
 
 
     /**
@@ -48,49 +49,45 @@ public class DefaultEvent implements LogEvent
     }
 
     /**
-     * For internal used only.
+     * (Constructor reserved for internal use).
      *
-     * @param journal
-     * @param name
-     * @param depth
-     * @param parent
-     * @param isPonctual
+     * See @EventJournal for how to initialize the root event.
+     *
+     * @param journal       The journal where this event will be logged to
+     * @param parent        The parent event that triggered this new event.
+     * @param depth         The level of depth from the root event (0 if no parent)
+     * @param name          The name of the Event
+     * @param isRelative    If this event ancestors are tracked relatively (see @EventJournal).
      */
-    protected DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent, boolean isPonctual)
+    public  DefaultEvent(EventJournal journal, String name, int depth, LogEvent parent, boolean isRelative)
     {
         this.journal    = journal;
         this.eventName  = name;
         this.depth      = depth;
         this.parent     = parent;
         this.attributes = new LinkedHashMap<>();
-
-        if (isPonctual) {
-            this.isPonctual = true;
-            this.state = EventState.ENDED;
-            this.eventStartedAtMS = System.currentTimeMillis();
-            this.eventEndedAtMS = this.eventStartedAtMS;
-        }
+        this.isRelative = isRelative;
     }
 
 
     @Override
     public LogEvent newChildEvent(String name)
     {
-        return new DefaultEvent( journal, name, depth + 1, this );
+        return new DefaultEvent( journal, name, depth + 1, this, this.isRelative() );
     }
 
 
     @Override
     public LogEvent newPonctualEvent(String name)
     {
-        return new DefaultEvent( journal, name, depth + 1, this, true);
+        return new PonctualEvent( journal, name, depth + 1, this, this.isRelative() );
     }
 
 
     @Override
     public LogEvent newThrowableEvent(Throwable throwable)
     {
-        return new ThrowableEvent( journal, depth + 1, this, throwable );
+        return new ThrowableEvent( journal, depth + 1, this, throwable, this.isRelative() );
     }
 
 
@@ -218,6 +215,9 @@ public class DefaultEvent implements LogEvent
         state               = EventState.STARTED;
         eventStartedAtMS    = System.currentTimeMillis();
 
+        if (isRelative() && !isPonctual())
+            journal().stackPushEvent(this);
+
         return this;
     }
 
@@ -230,6 +230,19 @@ public class DefaultEvent implements LogEvent
         // Accumulating this event's duration into the parent's scope
         if (parent != null)
             parent.count(getDurationCounterName(), durationInMS());
+
+        if (isRelative() && !isPonctual())
+            journal().stackRemoveEvent(this);
+
+        return this;
+    }
+
+    @Override
+    public LogEvent stopAll()
+    {
+        stop();
+        if (parent != null)
+            parent.stopAll();
 
         return this;
     }
@@ -280,6 +293,11 @@ public class DefaultEvent implements LogEvent
     @Override
     public boolean isPonctual() {
         return this.isPonctual;
+    }
+
+    @Override
+    public boolean isRelative() {
+        return this.isRelative;
     }
 
     protected EventJournal journal() {
